@@ -37,9 +37,9 @@ def draw(plan, ax, max_dims):
     for box in plan["boxes"]:
         ax.add_collection3d(Poly3DCollection(cuboid_faces(box["x"], box["y"], box["z"], box["lx"], box["ly"], box["lz"]), edgecolors="k", linewidths=0.5, alpha=0.5))
 
-    # 显示装载率
+    # 显示利用率
     ax.set_title(f"Container {container['id']}")
-    ax.text2D(0.5, -0.12, f"Volume Rate: {plan['volume_rate']}", transform=ax.transAxes, ha="center")
+    ax.text2D(0.5, -0.12, f"Volume Rate: {plan['volume_rate']}, Weight Rate: {plan['weight_rate']}", transform=ax.transAxes, ha="center")
 
 
 def main(file):

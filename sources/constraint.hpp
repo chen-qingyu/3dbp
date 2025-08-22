@@ -85,6 +85,17 @@ public:
         return actual_area >= box.lx * box.ly;
     }
 
+    /// 约束4：箱子总重量不能超过载具载重
+    bool check_weight(const Box& box) const
+    {
+        double total = box.weight;
+        for (const auto& b : boxes_)
+        {
+            total += b.weight;
+        }
+        return total <= container_.load;
+    }
+
     /// 检查是否满足所有约束
     /// @param box 待检查的箱子
     /// @return 是否满足所有约束
@@ -92,7 +103,8 @@ public:
     {
         return check_bound(box) &&
                check_overlap(box) &&
-               check_support(box);
+               check_support(box) &&
+               check_weight(box);
     }
 };
 

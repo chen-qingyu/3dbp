@@ -73,6 +73,18 @@ private:
         return static_cast<double>(used_volume) / container_.volume();
     }
 
+    /// 计算重量利用率
+    /// @return 重量利用率（0-1之间）
+    double calculate_weight_rate() const
+    {
+        double used_weight = 0;
+        for (const auto& box : placed_boxes_)
+        {
+            used_weight += box.weight;
+        }
+        return used_weight / container_.load;
+    }
+
     /// 选择合适的载具（目的是体积利用率尽可能高）
     /// @return 选择的载具
     Container select_container() const
@@ -148,6 +160,7 @@ public:
             plan.container = container_;
             plan.boxes = placed_boxes_;
             plan.volume_rate = calculate_volume_rate();
+            plan.weight_rate = calculate_weight_rate();
             output.plans.push_back(plan);
         }
 
