@@ -19,6 +19,11 @@ struct Container
         return static_cast<long long>(lx) * ly * lz;
     }
 
+    bool operator==(const Container& other) const
+    {
+        return this->id == other.id;
+    }
+
     friend void from_json(const json& j, Container& c)
     {
         c.id = j["id"];
@@ -46,6 +51,11 @@ struct Box
     long long volume() const
     {
         return static_cast<long long>(lx) * ly * lz;
+    }
+
+    bool operator==(const Box& other) const
+    {
+        return this->id == other.id;
     }
 
     friend void from_json(const json& j, Box& b)

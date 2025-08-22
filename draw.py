@@ -25,13 +25,13 @@ def cuboid_faces(x, y, z, l, w, h):
     ]
 
 
-def draw(plan, ax):
+def draw(plan, ax, max_dims):
     # 画容器
     container = plan["container"]
     cl, cw, ch = container["lx"], container["ly"], container["lz"]
     ax.add_collection3d(Poly3DCollection(cuboid_faces(0, 0, 0, cl, cw, ch), edgecolors="k", alpha=0.1))
-    ax.set_box_aspect([cl, cw, ch])
-    ax.set(xlim=(0, cl), ylim=(0, cw), zlim=(0, ch), xlabel="X", ylabel="Y", zlabel="Z")
+    ax.set_box_aspect([max_dims[0], max_dims[1], max_dims[2]])
+    ax.set(xlim=(0, max_dims[0]), ylim=(0, max_dims[1]), zlim=(0, max_dims[2]), xlabel="X", ylabel="Y", zlabel="Z")
 
     # 画箱子
     for box in plan["boxes"]:
@@ -45,13 +45,23 @@ def draw(plan, ax):
 def main(file):
     with open(file, "r", encoding="utf-8") as f:
         plans = json.load(f)["plans"]
+
+    # 计算所有容器在长宽高三个维度的最大尺寸
+    max_l = max_w = max_h = 0
+    for plan in plans:
+        container = plan["container"]
+        max_l = max(max_l, container["lx"])
+        max_w = max(max_w, container["ly"])
+        max_h = max(max_h, container["lz"])
+    max_dims = [max_l, max_w, max_h]
+
     n = len(plans)
     cols = min(4, n)
     rows = (n + cols - 1) // cols
     fig = plt.figure(figsize=(6 * cols, 5 * rows))
     for i, plan in enumerate(plans):
         ax = fig.add_subplot(rows, cols, i + 1, projection="3d")
-        draw(plan, ax)
+        draw(plan, ax, max_dims)
     plt.tight_layout()
     plt.show()
 

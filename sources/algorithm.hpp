@@ -11,9 +11,10 @@
 class Simple
 {
 private:
-    Container container_;           // 载具
-    std::vector<Box> boxes_;        // 待放置的箱子
-    std::vector<Box> placed_boxes_; // 已放置的箱子
+    std::vector<Container> containers_; // 可用载具
+    Container container_;               // 当前载具
+    std::vector<Box> remaining_boxes_;  // 待放置箱子
+    std::vector<Box> placed_boxes_;     // 已放置箱子
 
     /// 尝试放置箱子
     /// @param box 待放置的箱子（会被修改位置）
@@ -142,49 +143,91 @@ private:
     /// @return 体积利用率（0-1之间）
     double calculate_volume_rate() const
     {
-        long long used = 0;
+        long long used_volume = 0;
         for (const auto& box : placed_boxes_)
         {
-            used += box.volume();
+            used_volume += box.volume();
         }
-        return static_cast<double>(used) / container_.volume();
+        return static_cast<double>(used_volume) / container_.volume();
+    }
+
+    /// 选择合适的载具（目的是体积利用率尽可能高）
+    /// @return 选择的载具
+    Container select_container() const
+    {
+        // 计算剩余箱子总体积
+        long long remaining_volume = 0;
+        for (const auto& box : remaining_boxes_)
+        {
+            remaining_volume += box.volume();
+        }
+        // 寻找合适的载具
+        for (const auto& container : containers_)
+        {
+            if (container.volume() >= remaining_volume)
+            {
+                return container;
+            }
+        }
+        return containers_.back(); // 如果没有合适的载具，使用最后一辆（最大的）
     }
 
 public:
     /// 构造函数
     /// @param input 输入数据
     Simple(const Input& input)
-        : container_(input.containers[0]) // 使用第一个载具
-        , boxes_(input.boxes)
+        : containers_(input.containers)
+        , remaining_boxes_(input.boxes)
         , placed_boxes_()
+        , container_()
     {
+        // 箱子按体积从大到小排序
+        std::sort(remaining_boxes_.begin(), remaining_boxes_.end(), [](const auto& a, const auto& b)
+                  { return a.volume() > b.volume(); });
+
+        // 载具按体积从小到大排序
+        std::sort(containers_.begin(), containers_.end(), [](const auto& a, const auto& b)
+                  { return a.volume() < b.volume(); });
     }
 
     /// 执行装箱算法
     /// @return 装箱结果
     Output run()
     {
-        // 箱子按体积从大到小排序
-        std::sort(boxes_.begin(), boxes_.end(), [](const Box& a, const Box& b)
-                  { return a.volume() > b.volume(); });
+        Output output;
 
-        // 尝试放置箱子
-        for (auto& box : boxes_)
+        // 逐个载具装箱，直到车辆用完或箱子装完
+        while (!containers_.empty() && !remaining_boxes_.empty())
         {
-            if (try_place(box))
+            // 选择合适的载具
+            container_ = select_container();
+
+            // 清空已放置的箱子
+            placed_boxes_.clear();
+
+            // 尝试放置箱子
+            for (auto& box : remaining_boxes_)
             {
-                placed_boxes_.push_back(box);
+                if (try_place(box))
+                {
+                    placed_boxes_.push_back(box);
+                }
             }
+
+            // 更新剩余箱子列表
+            std::erase_if(remaining_boxes_, [&](const Box& box)
+                          { return std::ranges::find(placed_boxes_, box) != placed_boxes_.end(); });
+            // 更新可用载具列表
+            containers_.erase(std::find(containers_.begin(), containers_.end(), container_));
+
+            // 创建装箱方案
+            Plan plan;
+            plan.container = container_;
+            plan.boxes = placed_boxes_;
+            plan.volume_rate = calculate_volume_rate();
+            output.plans.push_back(plan);
         }
 
-        // 创建装箱方案
-        Plan plan;
-        plan.container = container_;
-        plan.boxes = placed_boxes_;
-        plan.volume_rate = calculate_volume_rate();
-
-        Output output;
-        output.plans.push_back(plan);
         return output;
     }
 };
