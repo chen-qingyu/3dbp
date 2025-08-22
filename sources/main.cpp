@@ -4,7 +4,7 @@
 
 #include <spdlog/spdlog.h>
 
-#include "entities.hpp"
+#include "algorithm.hpp"
 
 int main(int argc, char** argv)
 {
@@ -23,8 +23,8 @@ int main(int argc, char** argv)
     input.close();
     spdlog::info("Successfully parsed input file \"{}\".", file);
 
-    // 元启发式算法处理
-    Output output_data;
+    // 算法处理
+    Output output_data = Simple(input_data).run();
 
     // 输出结果到文件
     std::filesystem::create_directories(output_dir);

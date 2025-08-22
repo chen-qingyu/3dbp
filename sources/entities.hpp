@@ -14,6 +14,11 @@ struct Container
     std::string id;
     int lx, ly, lz;
 
+    long long volume() const
+    {
+        return static_cast<long long>(lx) * ly * lz;
+    }
+
     friend void from_json(const json& j, Container& c)
     {
         c.id = j["id"];
@@ -37,6 +42,11 @@ struct Box
     std::string id;
     int lx, ly, lz;
     int x, y, z;
+
+    long long volume() const
+    {
+        return static_cast<long long>(lx) * ly * lz;
+    }
 
     friend void from_json(const json& j, Box& b)
     {
