@@ -104,7 +104,7 @@ public:
         return check_bound(box) &&
                check_overlap(box) &&
                check_support(box) &&
-               check_weight(box);
+               (std::isnan(container_.load) || check_weight(box));
     }
 };
 

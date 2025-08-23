@@ -39,7 +39,12 @@ def draw(plan, ax, max_dims):
 
     # 显示利用率
     ax.set_title(f"Container {container['id']}")
-    ax.text2D(0.5, -0.12, f"Volume Rate: {plan['volume_rate']}, Weight Rate: {plan['weight_rate']}", transform=ax.transAxes, ha="center")
+    info = f"Volume Rate: {plan['volume_rate']}, "
+    if plan['weight_rate'] is None:
+        info += "No Weight Limit"
+    else:
+        info += f"Weight Rate: {plan['weight_rate']}"
+    ax.text2D(0.5, -0.12, info, transform=ax.transAxes, ha="center")
 
 
 def main(file):

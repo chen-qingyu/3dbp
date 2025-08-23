@@ -34,7 +34,7 @@ struct Container
         c.lz = j["lz"];
 
         // 可选字段
-        c.load = j.value("load", 1.0);
+        c.load = j.value("load", NAN);
     }
 
     friend void to_json(json& j, const Container& c)
@@ -74,7 +74,7 @@ struct Box
         b.lz = j["lz"];
 
         // 可选字段
-        b.weight = j.value("weight", 0.0);
+        b.weight = j.value("weight", NAN);
 
         // 输出字段
         b.x = -1;
