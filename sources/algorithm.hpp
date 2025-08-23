@@ -5,6 +5,8 @@
 #include <tuple>
 #include <vector>
 
+#include <spdlog/spdlog.h>
+
 #include "constraint.hpp"
 
 /// 简单装箱算法
@@ -136,7 +138,6 @@ public:
         {
             // 选择合适的载具
             container_ = select_container();
-
             // 清空已放置的箱子
             placed_boxes_.clear();
 
@@ -148,6 +149,8 @@ public:
                     placed_boxes_.push_back(box);
                 }
             }
+
+            spdlog::info("Packed {} boxes in container \"{}\".", placed_boxes_.size(), container_.id);
 
             // 更新剩余箱子列表
             std::erase_if(remaining_boxes_, [&](const Box& box)
@@ -163,6 +166,8 @@ public:
             plan.weight_rate = calculate_weight_rate();
             output.plans.push_back(plan);
         }
+        output.unpacked_boxes = remaining_boxes_;
+        spdlog::info("Unpacked {} boxes.", output.unpacked_boxes.size());
 
         return output;
     }

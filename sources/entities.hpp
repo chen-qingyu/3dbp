@@ -129,10 +129,12 @@ struct Plan
 struct Output
 {
     std::vector<Plan> plans;
+    std::vector<Box> unpacked_boxes;
 
     friend void to_json(json& j, const Output& o)
     {
         j["plans"] = o.plans;
+        j["unpacked_boxes"] = o.unpacked_boxes;
     }
 };
 
