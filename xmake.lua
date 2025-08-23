@@ -11,3 +11,8 @@ target("3dbp")
     set_rundir(".")
     add_packages("nlohmann_json", "spdlog")
     add_files("sources/*.cpp")
+
+    after_run(function (target)
+        local args = import("core.base.option").get("arguments")
+        os.execv("py", {"draw.py", "./result/result-" .. path.filename(args[1])})
+    end)
