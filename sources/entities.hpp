@@ -88,9 +88,14 @@ struct Box
         j["lx"] = b.lx;
         j["ly"] = b.ly;
         j["lz"] = b.lz;
-        j["x"] = b.x;
-        j["y"] = b.y;
-        j["z"] = b.z;
+
+        // 如果箱子成功装载了才输出位置信息
+        if (b.x != -1 && b.y != -1 && b.z != -1)
+        {
+            j["x"] = b.x;
+            j["y"] = b.y;
+            j["z"] = b.z;
+        }
     }
 };
 

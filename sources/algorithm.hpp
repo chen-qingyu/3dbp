@@ -171,6 +171,13 @@ public:
             plan.weight_rate = calculate_weight_rate();
             output.plans.push_back(plan);
         }
+        // 恢复未放置箱子的位置
+        for (auto& box : remaining_boxes_)
+        {
+            box.x = -1;
+            box.y = -1;
+            box.z = -1;
+        }
         output.unpacked_boxes = remaining_boxes_;
         spdlog::info("Unpacked {} boxes.", output.unpacked_boxes.size());
 
