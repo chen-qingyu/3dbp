@@ -1,7 +1,7 @@
 """
 绘制 3D 装箱图。
 Usage:
-    python draw.py output.json
+    py draw.py <result_json>
 """
 
 import sys
@@ -137,7 +137,7 @@ def main(plans: list[dict]):
 if __name__ == "__main__":
     # 检查命令行参数
     if len(sys.argv) != 2:
-        print("Usage: python draw.py <json_file>")
+        print("Usage: py draw.py <result_json>")
         sys.exit(1)
     # 加载装箱方案数据
     with open(sys.argv[1], "r", encoding="utf-8") as f:

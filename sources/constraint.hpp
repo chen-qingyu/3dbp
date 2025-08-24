@@ -5,20 +5,21 @@
 
 #include "entities.hpp"
 
+/// 约束检查类
 class Constraint
 {
 private:
-    const Container& container_;    // 当前载具的引用
-    const std::vector<Box>& boxes_; // 已放置箱子的引用
+    const Container& container_;    // 当前容器的引用
+    const std::vector<Box>& boxes_; // 已装载箱子的引用
 
 public:
-    Constraint(const Container& container, const std::vector<Box>& placed_boxes)
+    Constraint(const Container& container, const std::vector<Box>& packed_boxes)
         : container_(container)
-        , boxes_(placed_boxes)
+        , boxes_(packed_boxes)
     {
     }
 
-    /// 约束1：箱子不能超出载具边界
+    /// 约束1：箱子不能超出容器边界
     /// @param box 待检查的箱子
     /// @return 是否满足约束
     bool check_bound(const Box& box) const
@@ -28,17 +29,17 @@ public:
                 box.z + box.lz <= container_.lz);
     }
 
-    /// 约束2：箱子不能与已放置的箱子重叠
+    /// 约束2：箱子不能与已装载的箱子重叠
     /// @param box 待检查的箱子
     /// @return 是否满足约束
     bool check_overlap(const Box& box) const
     {
-        // 遍历所有已放置的箱子
-        for (const auto& placed_box : boxes_)
+        // 遍历所有已装载的箱子
+        for (const auto& packed_box : boxes_)
         {
-            bool x_overlap = (box.x < placed_box.x + placed_box.lx) && (placed_box.x < box.x + box.lx);
-            bool y_overlap = (box.y < placed_box.y + placed_box.ly) && (placed_box.y < box.y + box.ly);
-            bool z_overlap = (box.z < placed_box.z + placed_box.lz) && (placed_box.z < box.z + box.lz);
+            bool x_overlap = (box.x < packed_box.x + packed_box.lx) && (packed_box.x < box.x + box.lx);
+            bool y_overlap = (box.y < packed_box.y + packed_box.ly) && (packed_box.y < box.y + box.ly);
+            bool z_overlap = (box.z < packed_box.z + packed_box.lz) && (packed_box.z < box.z + box.lz);
             // 三个方向都重叠才是重叠
             if (x_overlap && y_overlap && z_overlap)
             {
@@ -53,13 +54,13 @@ public:
     /// @return 是否满足约束
     bool check_support(const Box& box) const
     {
-        // 如果箱子直接放在载具底面上，则认为有支撑
+        // 如果箱子直接放在容器底面上，则认为有支撑
         if (box.z == 0)
         {
             return true;
         }
 
-        // 检查所有已放置的箱子
+        // 检查所有已装载的箱子
         int actual_area = 0;
         for (const auto& support_box : boxes_)
         {
@@ -85,7 +86,9 @@ public:
         return actual_area >= box.lx * box.ly;
     }
 
-    /// 约束4：箱子总重量不能超过载具载重
+    /// 约束4：箱子总重量不能超过容器载重（若输入存在载重限制）
+    /// @param box 待检查的箱子
+    /// @return 是否满足约束
     bool check_weight(const Box& box) const
     {
         double total = box.weight;
@@ -93,7 +96,7 @@ public:
         {
             total += b.weight;
         }
-        return total <= container_.load;
+        return total <= container_.payload;
     }
 
     /// 检查是否满足所有约束
@@ -104,7 +107,7 @@ public:
         return check_bound(box) &&
                check_overlap(box) &&
                check_support(box) &&
-               (std::isnan(container_.load) || check_weight(box));
+               (std::isnan(container_.payload) || check_weight(box));
     }
 };
 

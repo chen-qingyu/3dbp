@@ -16,9 +16,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::string file = argv[1];
-
     // 读取输入
+    std::string file = argv[1];
     std::ifstream input(file);
     if (!input.is_open())
     {
@@ -32,7 +31,7 @@ int main(int argc, char** argv)
     // 算法处理
     Output output_data = Simple(input_data).run();
 
-    // 输出结果到文件
+    // 输出结果
     path output = path("result") / ("result-" + path(file).filename().string());
     std::filesystem::create_directories(output.parent_path());
     std::ofstream(output) << json(output_data).dump(2);

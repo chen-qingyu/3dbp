@@ -11,9 +11,9 @@ using json = nlohmann::json;
 /// Represents a 3D container.
 struct Container
 {
-    std::string id; // 载具ID
-    int lx, ly, lz; // 载具尺寸
-    double load;    // 载具负载
+    std::string id; // 容器ID
+    int lx, ly, lz; // 容器尺寸
+    double payload; // 容器载重
 
     long long volume() const
     {
@@ -34,7 +34,7 @@ struct Container
         c.lz = j["lz"];
 
         // 可选字段
-        c.load = j.value("load", NAN);
+        c.payload = j.value("payload", NAN);
     }
 
     friend void to_json(json& j, const Container& c)
@@ -44,9 +44,9 @@ struct Container
         j["ly"] = c.ly;
         j["lz"] = c.lz;
 
-        if (!isnan(c.load))
+        if (!isnan(c.payload))
         {
-            j["load"] = c.load;
+            j["payload"] = c.payload;
         }
     }
 };
