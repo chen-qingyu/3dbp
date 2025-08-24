@@ -2,6 +2,7 @@
 #define ALGORITHM_H
 
 #include <algorithm>
+#include <ranges>
 #include <tuple>
 #include <vector>
 
@@ -24,23 +25,19 @@ private:
     /// @return 是否成功放置
     bool try_place(Box& box) const
     {
-        // 生成所有可能的放置位置（候选点）
-        std::vector<std::tuple<int, int, int>> candidates;
+        // 包括原点（左前角）在内的所有可能的放置位置（候选点）
+        std::vector<std::tuple<int, int, int>> candidates{{0, 0, 0}};
 
-        // 添加原点（左后角）作为候选位置
-        candidates.emplace_back(0, 0, 0);
-
-        // 基于已放置箱子生成候选位置
+        // 在已放置箱子的右方、后方、上方生成候选点
         for (const auto& box : placed_boxes_)
         {
-            // 在已放置箱子的右方、前方、上方生成候选点
             candidates.emplace_back(box.x + box.lx, box.y, box.z); // 右方
-            candidates.emplace_back(box.x, box.y + box.ly, box.z); // 前方
+            candidates.emplace_back(box.x, box.y + box.ly, box.z); // 后方
             candidates.emplace_back(box.x, box.y, box.z + box.lz); // 上方
         }
 
-        // 排序候选位置，优先级：z（高度/上方）> y（宽度/前方）> x（长度/右方）
-        std::sort(candidates.begin(), candidates.end());
+        // 排序候选位置，优先级：z（高度/上方）> y（宽度/后方）> x（长度/右方）
+        std::ranges::sort(candidates);
 
         // 尝试每个候选位置
         for (const auto& candidate : candidates)
@@ -50,17 +47,13 @@ private:
             box.z = std::get<2>(candidate);
 
             // 检查所有约束
-            if (!constraint_.check_constraints(box))
+            if (constraint_.check_constraints(box))
             {
-                continue;
+                return true; // 找到有效位置
             }
-
-            // 找到有效位置
-            return true;
         }
 
-        // 没有找到有效位置
-        return false;
+        return false; // 没有找到有效位置
     }
 
     /// 计算体积利用率
@@ -124,12 +117,12 @@ public:
         , constraint_(container_, placed_boxes_)
     {
         // 箱子按体积从大到小排序
-        std::sort(remaining_boxes_.begin(), remaining_boxes_.end(), [](const auto& a, const auto& b)
-                  { return a.volume() > b.volume(); });
+        std::ranges::sort(remaining_boxes_, [](const auto& a, const auto& b)
+                          { return a.volume() > b.volume(); });
 
         // 载具按体积从小到大排序
-        std::sort(containers_.begin(), containers_.end(), [](const auto& a, const auto& b)
-                  { return a.volume() < b.volume(); });
+        std::ranges::sort(containers_, [](const auto& a, const auto& b)
+                          { return a.volume() < b.volume(); });
     }
 
     /// 执行装箱算法
