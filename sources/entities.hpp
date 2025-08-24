@@ -43,7 +43,11 @@ struct Container
         j["lx"] = c.lx;
         j["ly"] = c.ly;
         j["lz"] = c.lz;
-        j["load"] = c.load;
+
+        if (!isnan(c.load))
+        {
+            j["load"] = c.load;
+        }
     }
 };
 
@@ -89,6 +93,11 @@ struct Box
         j["ly"] = b.ly;
         j["lz"] = b.lz;
 
+        if (!isnan(b.weight))
+        {
+            j["weight"] = b.weight;
+        }
+
         // 如果箱子成功装载了才输出位置信息
         if (b.x != -1 && b.y != -1 && b.z != -1)
         {
@@ -126,7 +135,11 @@ struct Plan
         j["container"] = p.container;
         j["boxes"] = p.boxes;
         j["volume_rate"] = p.volume_rate;
-        j["weight_rate"] = p.weight_rate;
+
+        if (!isnan(p.weight_rate))
+        {
+            j["weight_rate"] = p.weight_rate;
+        }
     }
 };
 

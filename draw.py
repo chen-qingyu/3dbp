@@ -90,11 +90,9 @@ def draw(plan: dict, ax, max_dims: tuple[int, int, int]):
     ax.set(xlabel="X", ylabel="Y", zlabel="Z")
 
     # 显示容器信息和利用率
-    info = f"Volume Rate: {plan['volume_rate']:.2%}, "
-    if plan['weight_rate'] is None:
-        info += "No Weight Limit"
-    else:
-        info += f"Weight Rate: {plan['weight_rate']:.2%}"
+    info = f"Volume Rate: {plan['volume_rate']:.2%}"
+    if 'weight_rate' in plan:
+        info += f", Weight Rate: {plan['weight_rate']:.2%}"
     ax.text2D(0.5, -0.05, info, transform=ax.transAxes, ha="center")
 
 
