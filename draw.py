@@ -87,7 +87,7 @@ def draw(plan: dict, ax, max_dims: tuple[int, int, int]):
 
     # 设置轴比例和范围
     ax.set_box_aspect([max_dims[0], max_dims[1], max_dims[2]])
-    ax.set(xlabel="X", ylabel="Y", zlabel="Z")
+    ax.set(xlim=(0, max_dims[0]), ylim=(0, max_dims[1]), zlim=(0, max_dims[2]), xlabel="X", ylabel="Y", zlabel="Z")
 
     # 显示容器信息和利用率
     info = f"Volume Rate: {plan['volume_rate']:.2%}"
