@@ -108,6 +108,33 @@ _Pack All~_
 | `plans`          | array | 装箱计划列表     |
 | `unpacked_boxes` | array | 未装载的箱子列表 |
 
+完整的输出格式树状图如下：
+
+```
+output
+├── plans
+│   ├── plan 1
+│   │   ├── container 1
+│   │   └── boxes
+│   │       ├── box 1
+│   │       ├── box 2
+│   │       └── ...
+│   │   ├── volume_rate
+│   │   └── weight_rate
+│   └── plan 2
+│       ├── container 2
+│       └── boxes
+│           ├── box 3
+│           ├── box 4
+│           └── ...
+│       ├── volume_rate
+│       └── weight_rate
+└── unpacked_boxes
+    ├── box 5
+    ├── box 6
+    └── ...
+```
+
 ## 5. 开发
 
 - 语言：C++ ，要求 [C++20](https://en.cppreference.com/w/cpp/20.html)
