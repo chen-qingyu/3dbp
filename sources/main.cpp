@@ -5,6 +5,7 @@
 #include <spdlog/spdlog.h>
 
 #include "algorithm.hpp"
+#include "tool.hpp"
 
 using std::filesystem::path;
 
@@ -24,9 +25,9 @@ int main(int argc, char** argv)
         spdlog::error("Failed to open input file \"{}\".", file);
         return 1;
     }
-    Input input_data = json::parse(input);
+    Input input_data = validate(json::parse(input));
     input.close();
-    spdlog::info("Successfully parsed input file \"{}\".", file);
+    spdlog::info("Successfully validated input \"{}\".", file);
 
     // 算法处理
     Output output_data = Simple(input_data).run();
