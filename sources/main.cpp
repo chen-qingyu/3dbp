@@ -11,6 +11,7 @@ using std::filesystem::path;
 
 int main(int argc, char** argv)
 {
+    // 检查参数
     if (argc != 2)
     {
         spdlog::error("Usage: {} <input_json>", path(argv[0]).filename().string());
@@ -18,25 +19,27 @@ int main(int argc, char** argv)
     }
 
     // 读取输入
-    std::string file = argv[1];
-    std::ifstream input(file);
-    if (!input.is_open())
+    std::string input = argv[1];
+    std::ifstream input_file(input);
+    if (!input_file.is_open())
     {
-        spdlog::error("Failed to open input file \"{}\".", file);
+        spdlog::error("Failed to open input file \"{}\".", input);
         return 1;
     }
-    json input_json = json::parse(input);
-    input.close();
+    json input_json = json::parse(input_file);
+    input_file.close();
+
+    // 校验输入
     validate_schema(input_json);
-    Input input_data = input_json;
-    validate_logic(input_data);
-    spdlog::info("Successfully validated input \"{}\".", file);
+    Input input_obj = input_json;
+    validate_logic(input_obj);
+    spdlog::info("Successfully validated input \"{}\".", input);
 
     // 算法处理
-    Output output_data = Simple(input_data).run();
+    Output output_data = Simple(input_obj).run();
 
     // 输出结果
-    path output = path("result") / ("result-" + path(file).filename().string());
+    path output = path("result") / ("result-" + path(input).filename().string());
     std::filesystem::create_directories(output.parent_path());
     std::ofstream(output) << json(output_data).dump(2);
     spdlog::info("Results written to \"{}\".", output.string());
