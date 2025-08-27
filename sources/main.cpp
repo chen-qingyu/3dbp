@@ -25,8 +25,11 @@ int main(int argc, char** argv)
         spdlog::error("Failed to open input file \"{}\".", file);
         return 1;
     }
-    Input input_data = validate(json::parse(input));
+    json input_json = json::parse(input);
     input.close();
+    validate_schema(input_json);
+    Input input_data = input_json;
+    validate_logic(input_data);
     spdlog::info("Successfully validated input \"{}\".", file);
 
     // 算法处理

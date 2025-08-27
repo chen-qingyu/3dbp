@@ -2,15 +2,17 @@
 #define TOOL_HPP
 
 #include <fstream>
+#include <unordered_set>
 
 #include <nlohmann/json-schema.hpp>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
-/// 校验JSON输入数据
-/// @param input JSON输入数据
-/// @return 校验通过后的原始输入
-auto validate(const nlohmann::json& input)
+#include "entities.hpp"
+
+/// 校验JSON输入数据格式
+/// @param input 输入JSON对象
+void validate_schema(const nlohmann::json& input)
 {
     using nlohmann::json;
     try
@@ -23,15 +25,39 @@ auto validate(const nlohmann::json& input)
 
         // 校验数据
         validator.validate(input);
-
-        // 校验通过，返回原始输入
-        return input;
     }
     catch (const std::exception& e)
     {
         // 校验失败，退出程序
         spdlog::error("JSON validation failed: {}", e.what());
-        exit(0);
+        exit(1);
+    }
+}
+
+/// 校验输入数据的逻辑关系
+/// @param input 输入Input对象
+void validate_logic(const Input& input)
+{
+    // 规则1：容器id全局唯一
+    std::unordered_set<std::string> container_ids;
+    for (const auto& c : input.containers)
+    {
+        if (!container_ids.insert(c.id).second)
+        {
+            spdlog::error("Duplicate container id: {}.", c.id);
+            exit(1);
+        }
+    }
+
+    // 规则2：箱子id全局唯一
+    std::unordered_set<std::string> box_ids;
+    for (const auto& b : input.boxes)
+    {
+        if (!box_ids.insert(b.id).second)
+        {
+            spdlog::error("Duplicate box id: {}.", b.id);
+            exit(1);
+        }
     }
 }
 
