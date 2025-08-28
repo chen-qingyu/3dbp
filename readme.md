@@ -141,5 +141,6 @@ output
 - 构建：使用 [XMake](https://xmake.io) 进行构建
 - 画图：使用 [Python](https://www.python.org) 进行画图
 - 风格：使用 [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) 统一代码风格，大部分遵循 [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html) ，小部分基于项目规模和源码简洁性的考虑采用自己的风格
+- 测试：使用 [Catch2](https://github.com/catchorg/Catch2) 进行测试
 - 安全：使用 [Dr. Memory](https://drmemory.org) 进行检查
 - 数据：使用 [OR-Library](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/thpackinfo.html) 的测试数据以评估装箱效果
