@@ -1,0 +1,29 @@
+Randomness seeded to: 3372249380
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bench.exe is a Catch2 v3.8.1 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+Benchmark
+-------------------------------------------------------------------------------
+benches\benchmark.cpp(9)
+...............................................................................
+
+benchmark name                            samples    iterations          mean
+-------------------------------------------------------------------------------
+data/br_json\br10_1.json                       100             1    2.20784 ms 
+data/br_json\br10_10.json                      100             1    1.86578 ms 
+data/br_json\br10_100.json                     100             1    2.18447 ms 
+data/br_json\br10_11.json                      100             1    1.54078 ms 
+data/br_json\br10_12.json                      100             1    1.72096 ms 
+data/br_json\br10_13.json                      100             1    3.55529 ms 
+data/br_json\br10_14.json                      100             1    1.41679 ms 
+data/br_json\br10_15.json                      100             1    1.74557 ms 
+data/br_json\br10_16.json                      100             1    1.81855 ms 
+data/br_json\br10_17.json                      100             1    1.92504 ms 
+
+===============================================================================
+test cases: 1 | 1 passed
+assertions: - none -
+
