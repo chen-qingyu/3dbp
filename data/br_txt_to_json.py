@@ -57,15 +57,18 @@ def parse_br_file(file):
 def main():
     """处理所有BR文件"""
     # https://people.brunel.ac.uk/~mastjjb/jeb/orlib/thpackinfo.html
+
+    if os.path.exists('data/br_json'):
+        return  # 若已存在则跳过处理
+
+    os.makedirs('data/br_json')
     for i in range(1, 11):
         br_path = f'data/br_txt/br{i}.txt'
         results = parse_br_file(br_path)
 
         # 每个问题都生成一个JSON文件
         for problem_num, result in results:
-            output_path = f'data/br_json/br{i}_{problem_num}.json'
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            with open(output_path, 'w') as f:
+            with open(f'data/br_json/br{i}_{problem_num}.json', 'w') as f:
                 json.dump(result, f, indent=2)
         print(f"OK: {br_path} -> {len(results)} json files")
 

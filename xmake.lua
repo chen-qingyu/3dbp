@@ -23,3 +23,14 @@ target("test")
     set_rundir(".")
     add_packages("nlohmann_json", "spdlog", "json-schema-validator", "catch2")
     add_files("tests/*.cpp")
+
+
+target("bench")
+    set_kind("binary")
+    set_rundir(".")
+    add_packages("nlohmann_json", "spdlog", "catch2")
+    add_files("benches/*.cpp")
+
+    before_run(function (target)
+        os.execv("py", {"data/br_txt_to_json.py"})
+    end)

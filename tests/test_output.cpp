@@ -14,6 +14,7 @@ TEST_CASE("Output")
     for (const auto& input_file : std::filesystem::directory_iterator("data/tests"))
     {
         // 运行算法并输出结果到文件
+        spdlog::set_level(spdlog::level::off);
         json input = json::parse(std::ifstream(input_file.path()));
         Output data = Simple(input).run();
         auto output_file = "result/result-" + input_file.path().filename().string();
