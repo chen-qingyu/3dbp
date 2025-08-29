@@ -6,7 +6,7 @@
 
 #include "../sources/algorithm.hpp"
 
-TEST_CASE("Benchmark")
+TEST_CASE("Benchmark", "[bench]")
 {
     spdlog::set_level(spdlog::level::off);
     int count = 0;
@@ -25,4 +25,4 @@ TEST_CASE("Benchmark")
     }
 }
 
-// xmake config -m release && xmake run bench --benchmark-no-analysis > "benches/benches_result.txt"
+// xmake config -m release && xmake run bench --benchmark-no-analysis -i [bench] > "benches/benches_result.txt"
