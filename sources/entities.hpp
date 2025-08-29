@@ -81,9 +81,9 @@ struct Box
         b.weight = j.value("weight", NAN);
 
         // 输出字段
-        b.x = -1;
-        b.y = -1;
-        b.z = -1;
+        b.x = j.value("x", -1);
+        b.y = j.value("y", -1);
+        b.z = j.value("z", -1);
     }
 
     friend void to_json(json& j, const Box& b)
@@ -155,5 +155,26 @@ struct Output
         j["unpacked_boxes"] = o.unpacked_boxes;
     }
 };
+
+namespace std
+{
+template <>
+struct hash<Box>
+{
+    std::size_t operator()(const Box& b) const
+    {
+        return std::hash<std::string>()(b.id);
+    }
+};
+
+template <>
+struct hash<Container>
+{
+    std::size_t operator()(const Container& c) const
+    {
+        return std::hash<std::string>()(c.id);
+    }
+};
+} // namespace std
 
 #endif // ENTITIES_HPP
