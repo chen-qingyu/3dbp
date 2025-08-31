@@ -13,7 +13,7 @@ TEST_CASE("Report", "[report]")
     for (const auto& entry : std::filesystem::directory_iterator("data/br_json"))
     {
         json input = json::parse(std::ifstream(entry.path()));
-        Output data = Simple(input).run();
+        Output data = Algorithm(input).run();
         double volume_rate = data.plans[0].volume_rate;
         results.emplace_back(entry.path().filename().string(), volume_rate);
     }

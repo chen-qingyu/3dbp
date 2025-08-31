@@ -1,5 +1,5 @@
-#ifndef ALGORITHM_H
-#define ALGORITHM_H
+#ifndef ALGORITHM_HPP
+#define ALGORITHM_HPP
 
 #include <algorithm>
 #include <ranges>
@@ -10,8 +10,8 @@
 
 #include "constraint.hpp"
 
-/// 简单装箱算法
-class Simple
+/// 装箱算法入口
+class Algorithm
 {
 private:
     std::vector<Container> containers_; // 可用容器
@@ -109,7 +109,7 @@ private:
 public:
     /// 构造函数
     /// @param input 输入数据
-    Simple(const Input& input)
+    Algorithm(const Input& input)
         : containers_(input.containers)
         , unpacked_boxes_(input.boxes)
         , packed_boxes_()
@@ -178,4 +178,4 @@ public:
     }
 };
 
-#endif // ALGORITHM_H
+#endif // ALGORITHM_HPP

@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     spdlog::info("Successfully validated input \"{}\".", input);
 
     // 算法处理
-    Output output_data = Simple(input_obj).run();
+    Output output_data = Algorithm(input_obj).run();
 
     // 输出结果
     path output = path("result") / ("result-" + path(input).filename().string());

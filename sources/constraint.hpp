@@ -1,5 +1,5 @@
-#ifndef CONSTRAINT_H
-#define CONSTRAINT_H
+#ifndef CONSTRAINT_HPP
+#define CONSTRAINT_HPP
 
 #include <cmath>
 
@@ -111,4 +111,4 @@ public:
     }
 };
 
-#endif // CONSTRAINT_H
+#endif // CONSTRAINT_HPP

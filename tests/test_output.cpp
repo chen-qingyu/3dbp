@@ -16,7 +16,7 @@ TEST_CASE("Output")
         // 运行算法并输出结果到文件
         spdlog::set_level(spdlog::level::off);
         json input = json::parse(std::ifstream(input_file.path()));
-        Output data = Simple(input).run();
+        Output data = Algorithm(input).run();
         auto output_file = "result/result-" + input_file.path().filename().string();
         std::ofstream(output_file) << json(data).dump(2);
 
