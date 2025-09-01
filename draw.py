@@ -71,17 +71,16 @@ def cuboid_faces(x: int, y: int, z: int, l: int, w: int, h: int) -> list[list[li
     ]
 
 
-def draw(plan: dict, ax, max_dims: tuple[int, int, int]):
+def draw(container: dict, ax, max_dims: tuple[int, int, int]):
     """绘制容器和箱子"""
     # 绘制容器
-    container = plan["container"]
     cl, cw, ch = container["lx"], container["ly"], container["lz"]
     container_faces = cuboid_faces(0, 0, 0, cl, cw, ch)
     ax.add_collection3d(Poly3DCollection(container_faces, edgecolors="black", alpha=0.1))
     ax.set_title(f"Container {container['id']}")
 
     # 绘制箱子
-    for box in plan["boxes"]:
+    for box in container["boxes"]:
         box_faces = cuboid_faces(box["x"], box["y"], box["z"], box["lx"], box["ly"], box["lz"])
         ax.add_collection3d(Poly3DCollection(box_faces, edgecolors="black", linewidths=0.5, alpha=0.5))
 
@@ -90,28 +89,27 @@ def draw(plan: dict, ax, max_dims: tuple[int, int, int]):
     ax.set(xlim=(0, max_dims[0]), ylim=(0, max_dims[1]), zlim=(0, max_dims[2]), xlabel="X", ylabel="Y", zlabel="Z")
 
     # 显示容器信息和利用率
-    info = f"Volume Rate: {plan['volume_rate']:.2%}"
-    if 'weight_rate' in plan:
-        info += f", Weight Rate: {plan['weight_rate']:.2%}"
+    info = f"Volume Rate: {container['volume_rate']:.2%}"
+    if 'weight_rate' in container:
+        info += f", Weight Rate: {container['weight_rate']:.2%}"
     ax.text2D(0.5, -0.05, info, transform=ax.transAxes, ha="center")
 
 
-def calc_max_dims(plans: list[dict]) -> tuple[int, int, int]:
+def calc_max_dims(containers: list[dict]) -> tuple[int, int, int]:
     """计算所有容器在长宽高三个维度的最大尺寸"""
     max_l, max_w, max_h = 0, 0, 0
-    for plan in plans:
-        container = plan["container"]
+    for container in containers:
         max_l = max(max_l, container["lx"])
         max_w = max(max_w, container["ly"])
         max_h = max(max_h, container["lz"])
     return (max_l, max_w, max_h)
 
 
-def main(plans: list[dict]):
+def main(containers: list[dict]):
     """绘制3D装箱图主函数"""
     # 计算绘图相关参数
-    max_dims = calc_max_dims(plans)
-    n = len(plans)
+    max_dims = calc_max_dims(containers)
+    n = len(containers)
     cols = min(4, n)  # 最多4列
     rows = (n + cols - 1) // cols
 
@@ -120,9 +118,9 @@ def main(plans: list[dict]):
     plot_axes = []
 
     # 绘制每个装箱方案
-    for i, plan in enumerate(plans):
+    for i, container in enumerate(containers):
         ax = fig.add_subplot(rows, cols, i + 1, projection="3d")
-        draw(plan, ax, max_dims)
+        draw(container, ax, max_dims)
         plot_axes.append(ax)
 
     # 创建视图切换按钮
@@ -141,6 +139,6 @@ if __name__ == "__main__":
         sys.exit(1)
     # 加载装箱方案数据
     with open(sys.argv[1], "r", encoding="utf-8") as f:
-        plans = json.load(f)["plans"]
+        containers = json.load(f)["containers"]
     # 绘制3D装箱图
-    main(plans)
+    main(containers)

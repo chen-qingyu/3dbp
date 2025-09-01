@@ -14,7 +14,7 @@ TEST_CASE("Report", "[report]")
     {
         json input = json::parse(std::ifstream(entry.path()));
         Output data = Algorithm(input).run();
-        double volume_rate = data.plans[0].volume_rate;
+        double volume_rate = data.containers[0].volume_rate;
         results.emplace_back(entry.path().filename().string(), volume_rate);
     }
 

@@ -157,12 +157,10 @@ public:
             containers_.erase(std::find(containers_.begin(), containers_.end(), container_));
 
             // 创建装箱方案
-            Plan plan;
-            plan.container = container_;
-            plan.boxes = packed_boxes_;
-            plan.volume_rate = calculate_volume_rate();
-            plan.weight_rate = calculate_weight_rate();
-            output.plans.push_back(plan);
+            container_.boxes = packed_boxes_;
+            container_.volume_rate = calculate_volume_rate();
+            container_.weight_rate = calculate_weight_rate();
+            output.containers.push_back(container_);
         }
         // 重置未装载箱子的位置
         for (auto& box : unpacked_boxes_)

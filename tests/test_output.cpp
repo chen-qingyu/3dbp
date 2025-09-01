@@ -27,28 +27,27 @@ TEST_CASE("Output")
         REQUIRE_NOTHROW(validator.validate(output));
 
         // 2. 确保输入箱子与输出箱子数量相等
-        int out_box_cnt = std::accumulate(output["plans"].begin(), output["plans"].end(),
+        int out_box_cnt = std::accumulate(output["containers"].begin(), output["containers"].end(),
                                           int(output["unpacked_boxes"].size()),
-                                          [](int sum, const json& plan)
-                                          { return sum + int(plan["boxes"].size()); });
+                                          [](int sum, const json& container)
+                                          { return sum + int(container["boxes"].size()); });
         REQUIRE(int(input["boxes"].size()) == out_box_cnt);
 
         // 3. 确保输入箱子与输出箱子实体相等
         std::unordered_set<Box> input_boxes = input["boxes"];
         std::unordered_set<Box> output_boxes = output["unpacked_boxes"];
-        for (const auto& plan : output["plans"])
+        for (const auto& container : output["containers"])
         {
-            output_boxes.insert(plan["boxes"].begin(), plan["boxes"].end());
+            output_boxes.insert(container["boxes"].begin(), container["boxes"].end());
         }
         REQUIRE(input_boxes == output_boxes);
 
         // 4. 确保输出的每个已装载箱子都符合约束
-        for (const auto& plan : output["plans"])
+        for (const auto& container : output["containers"])
         {
-            Container container = plan["container"];
-            for (const auto& box : plan["boxes"])
+            for (const auto& box : container["boxes"])
             {
-                std::vector<Box> boxes = plan["boxes"];
+                std::vector<Box> boxes = container["boxes"];
                 boxes.erase(std::find(boxes.begin(), boxes.end(), box));
                 Constraint constraint(container, boxes);
                 REQUIRE(constraint.check_constraints(box));

@@ -1,25 +1,18 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["plans", "unpacked_boxes"],
+  "required": ["containers", "unpacked_boxes"],
   "properties": {
-    "plans": {
+    "containers": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["container", "boxes", "volume_rate"],
+        "required": ["id", "lx", "ly", "lz", "boxes", "volume_rate"],
         "properties": {
-          "container": {
-            "type": "object",
-            "required": ["id", "lx", "ly", "lz"],
-            "properties": {
-              "id": { "type": "string" },
-              "lx": { "type": "integer", "minimum": 1 },
-              "ly": { "type": "integer", "minimum": 1 },
-              "lz": { "type": "integer", "minimum": 1 },
-              "payload": { "type": "number", "minimum": 0 }
-            }
-          },
+          "id": { "type": "string" },
+          "lx": { "type": "integer", "minimum": 1 },
+          "ly": { "type": "integer", "minimum": 1 },
+          "lz": { "type": "integer", "minimum": 1 },
           "boxes": {
             "type": "array",
             "items": {

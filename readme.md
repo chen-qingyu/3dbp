@@ -71,13 +71,16 @@ _Pack All~_
 
 #### Container (容器)
 
-| 字段名    | 类型    | 描述                   |
-| --------- | ------- | ---------------------- |
-| `id`      | string  | 容器的唯一标识符       |
-| `lx`      | integer | 容器的长度             |
-| `ly`      | integer | 容器的宽度             |
-| `lz`      | integer | 容器的高度             |
-| `payload` | number  | 容器的最大载重（可选） |
+| 字段名        | 类型    | 描述                     |
+| ------------- | ------- | ------------------------ |
+| `id`          | string  | 容器的唯一标识符         |
+| `lx`          | integer | 容器的长度               |
+| `ly`          | integer | 容器的宽度               |
+| `lz`          | integer | 容器的高度               |
+| `payload`     | number  | 容器的最大载重（可选）   |
+| `boxes`       | array   | 已装载的箱子列表         |
+| `volume_rate` | number  | 容器的体积利用率         |
+| `weight_rate` | number  | 容器的载重利用率（可选） |
 
 #### Box (箱子)
 
@@ -92,41 +95,38 @@ _Pack All~_
 | `z`      | integer | 装载的 Z 轴坐标    |
 | `weight` | number  | 箱子的重量（可选） |
 
-#### Plan (装箱计划)
-
-| 字段名        | 类型   | 描述                     |
-| ------------- | ------ | ------------------------ |
-| `container`   | object | 使用的容器信息           |
-| `boxes`       | array  | 已装载的箱子列表         |
-| `volume_rate` | number | 容器的体积利用率         |
-| `weight_rate` | number | 容器的载重利用率（可选） |
-
 #### Output (输出数据)
 
 | 字段名           | 类型  | 描述             |
 | ---------------- | ----- | ---------------- |
-| `plans`          | array | 装箱计划列表     |
+| `containers`     | array | 装箱计划列表     |
 | `unpacked_boxes` | array | 未装载的箱子列表 |
 
 完整的输出格式树状图如下：
 
 ```
 output
-├── plans
-│   ├── plan 1
-│   │   ├── container 1
+├── containers
+│   ├── container 1
+│   │   ├── id
+│   │   ├── lx
+│   │   ├── ly
+│   │   ├── lz
 │   │   └── boxes
-│   │       ├── box 1
-│   │       ├── box 2
-│   │       └── ...
+│   │   │   ├── box 1
+│   │   │   ├── box 2
+│   │   │   └── ...
 │   │   ├── volume_rate
 │   │   └── weight_rate
-│   └── plan 2
-│       ├── container 2
+│   └── container 2
+│       ├── id
+│       ├── lx
+│       ├── ly
+│       ├── lz
 │       └── boxes
-│           ├── box 3
-│           ├── box 4
-│           └── ...
+│       │   ├── box 3
+│       │   ├── box 4
+│       │   └── ...
 │       ├── volume_rate
 │       └── weight_rate
 └── unpacked_boxes

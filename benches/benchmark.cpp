@@ -20,7 +20,7 @@ TEST_CASE("Benchmark", "[bench]")
         {
             Input input = json::parse(std::ifstream(entry.path()));
             Output output = Algorithm(input).run();
-            return output.plans.size(); // 返回方案数量，防止优化
+            return output.containers.size(); // 返回方案数量，防止优化
         };
     }
 }
