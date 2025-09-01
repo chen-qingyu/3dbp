@@ -142,3 +142,34 @@ output
 - 测试：使用 [Catch2](https://github.com/catchorg/Catch2) 进行测试
 - 安全：使用 [Dr. Memory](https://drmemory.org) 进行检查
 - 数据：使用 [OR-Library](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/thpackinfo.html) 的测试数据以评估装箱效果
+
+note:
+
+```bash
+# 格式化代码
+xmake format
+
+# 配置 debug 模式
+xmake config -m debug
+
+# 运行 demo 并画图
+xmake run 3dbp ./data/demo.json
+
+# 单元测试 & 集成测试
+xmake run test
+
+# 覆盖率测试
+opencppcoverage --sources sources --export_type html:build/coverage -- ./build/windows/x64/debug/test.exe
+
+# 配置 release 模式
+xmake config -m release
+
+# 性能测试
+xmake run bench --benchmark-no-analysis -i [bench]
+
+# 生成报告
+xmake run bench -i [report]
+
+# 生成 cmake 配置文件
+xmake project -k cmake
+```

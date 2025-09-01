@@ -24,5 +24,3 @@ TEST_CASE("Benchmark", "[bench]")
         };
     }
 }
-
-// xmake config -m release && xmake run bench --benchmark-no-analysis -i [bench] > "benches/benches_result.txt"

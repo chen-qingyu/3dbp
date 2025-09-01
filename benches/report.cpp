@@ -25,5 +25,3 @@ TEST_CASE("Report", "[report]")
         csv << name << ',' << rate << '\n';
     }
 }
-
-// xmake config -m release && xmake run bench -i [report]
