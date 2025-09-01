@@ -72,7 +72,7 @@ private:
     /// @return 重量利用率（0-1之间）
     double calculate_weight_rate() const
     {
-        if (isnan(container_.payload))
+        if (std::isnan(container_.payload))
         {
             return NAN; // 容器未设置载重
         }

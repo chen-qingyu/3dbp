@@ -11,10 +11,15 @@ using json = nlohmann::json;
 /// Represents a 3D box.
 struct Box
 {
+    // 必选字段
     std::string id; // 箱子ID
     int lx, ly, lz; // 箱子尺寸
-    int x, y, z;    // 箱子位置
-    double weight;  // 箱子重量
+
+    // 可选字段
+    double weight; // 箱子重量
+
+    // 输出字段
+    int x, y, z; // 箱子位置
 
     long long volume() const
     {
@@ -28,16 +33,14 @@ struct Box
 
     friend void from_json(const json& j, Box& b)
     {
-        // 必选字段
         b.id = j["id"];
         b.lx = j["lx"];
         b.ly = j["ly"];
         b.lz = j["lz"];
 
-        // 可选字段
         b.weight = j.value("weight", NAN);
 
-        // 输出字段
+        // 测试中反序列化可能会用到
         b.x = j.value("x", -1);
         b.y = j.value("y", -1);
         b.z = j.value("z", -1);
@@ -49,11 +52,6 @@ struct Box
         j["lx"] = b.lx;
         j["ly"] = b.ly;
         j["lz"] = b.lz;
-
-        if (!isnan(b.weight))
-        {
-            j["weight"] = b.weight;
-        }
 
         // 如果箱子成功装载了才输出位置信息
         if (b.x != -1 && b.y != -1 && b.z != -1)
@@ -68,10 +66,14 @@ struct Box
 /// Represents a 3D container.
 struct Container
 {
+    // 必选字段
     std::string id; // 容器ID
     int lx, ly, lz; // 容器尺寸
+
+    // 可选字段
     double payload; // 容器载重
 
+    // 输出字段
     std::vector<Box> boxes; // 装载的箱子
     double volume_rate;     // 体积利用率
     double weight_rate;     // 重量利用率
@@ -83,24 +85,22 @@ struct Container
 
     bool operator==(const Container& other) const
     {
-        return this->id == other.id;
+        return this->id == other.id && boxes == other.boxes;
     }
 
     friend void from_json(const json& j, Container& c)
     {
-        // 必选字段
         c.id = j["id"];
         c.lx = j["lx"];
         c.ly = j["ly"];
         c.lz = j["lz"];
 
-        // 可选字段
         c.payload = j.value("payload", NAN);
 
-        // 输出字段
-        c.boxes = {};
-        c.volume_rate = NAN;
-        c.weight_rate = NAN;
+        // 测试中反序列化可能会用到
+        c.boxes = j.value("boxes", std::vector<Box>{});
+        c.volume_rate = j.value("volume_rate", NAN);
+        c.weight_rate = j.value("weight_rate", NAN);
     }
 
     friend void to_json(json& j, const Container& c)
@@ -110,15 +110,10 @@ struct Container
         j["ly"] = c.ly;
         j["lz"] = c.lz;
 
-        if (!isnan(c.payload))
-        {
-            j["payload"] = c.payload;
-        }
-
         j["boxes"] = c.boxes;
         j["volume_rate"] = c.volume_rate;
 
-        if (!isnan(c.weight_rate))
+        if (!std::isnan(c.weight_rate))
         {
             j["weight_rate"] = c.weight_rate;
         }
@@ -128,12 +123,12 @@ struct Container
 /// Represents the input data for the packing problem.
 struct Input
 {
+    // 必选字段
     std::vector<Container> containers;
     std::vector<Box> boxes;
 
     friend void from_json(const json& j, Input& i)
     {
-        // 必选字段
         i.containers = j["containers"];
         i.boxes = j["boxes"];
     }

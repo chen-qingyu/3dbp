@@ -77,23 +77,21 @@ _Pack All~_
 | `lx`          | integer | 容器的长度               |
 | `ly`          | integer | 容器的宽度               |
 | `lz`          | integer | 容器的高度               |
-| `payload`     | number  | 容器的最大载重（可选）   |
 | `boxes`       | array   | 已装载的箱子列表         |
 | `volume_rate` | number  | 容器的体积利用率         |
 | `weight_rate` | number  | 容器的载重利用率（可选） |
 
 #### Box (箱子)
 
-| 字段名   | 类型    | 描述               |
-| -------- | ------- | ------------------ |
-| `id`     | string  | 箱子的唯一标识符   |
-| `lx`     | integer | 箱子的长度         |
-| `ly`     | integer | 箱子的宽度         |
-| `lz`     | integer | 箱子的高度         |
-| `x`      | integer | 装载的 X 轴坐标    |
-| `y`      | integer | 装载的 Y 轴坐标    |
-| `z`      | integer | 装载的 Z 轴坐标    |
-| `weight` | number  | 箱子的重量（可选） |
+| 字段名 | 类型    | 描述             |
+| ------ | ------- | ---------------- |
+| `id`   | string  | 箱子的唯一标识符 |
+| `lx`   | integer | 箱子的长度       |
+| `ly`   | integer | 箱子的宽度       |
+| `lz`   | integer | 箱子的高度       |
+| `x`    | integer | 装载的 X 轴坐标  |
+| `y`    | integer | 装载的 Y 轴坐标  |
+| `z`    | integer | 装载的 Z 轴坐标  |
 
 #### Output (输出数据)
 
