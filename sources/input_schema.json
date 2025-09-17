@@ -27,7 +27,8 @@
           "lx": { "type": "integer", "minimum": 1 },
           "ly": { "type": "integer", "minimum": 1 },
           "lz": { "type": "integer", "minimum": 1 },
-          "weight": { "type": "number", "minimum": 0 }
+          "weight": { "type": "number", "minimum": 0 },
+          "group": { "type": "string" }
         }
       }
     }

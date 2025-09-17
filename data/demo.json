@@ -21,35 +21,40 @@
       "lx": 10,
       "ly": 10,
       "lz": 10,
-      "weight": 100
+      "weight": 100,
+      "group": "A"
     },
     {
       "id": "b2",
       "lx": 10,
       "ly": 10,
       "lz": 10,
-      "weight": 100
+      "weight": 100,
+      "group": "A"
     },
     {
       "id": "b3",
       "lx": 10,
       "ly": 10,
       "lz": 10,
-      "weight": 100
+      "weight": 100,
+      "group": "B"
     },
     {
       "id": "b4",
       "lx": 100,
       "ly": 100,
       "lz": 100,
-      "weight": 500
+      "weight": 500,
+      "group": "A"
     },
     {
       "id": "b5",
       "lx": 100,
       "ly": 100,
       "lz": 100,
-      "weight": 500
+      "weight": 500,
+      "group": "B"
     }
   ]
 }

@@ -11,6 +11,13 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from matplotlib.widgets import Button
+from matplotlib.colors import TABLEAU_COLORS
+
+
+def get_color(box: dict):
+    """颜色映射"""
+    base = list(TABLEAU_COLORS.values())
+    return base[hash(box["group"] if "group" in box else "") % len(base)]
 
 
 @dataclass
@@ -82,7 +89,7 @@ def draw(container: dict, ax, max_dims: tuple[int, int, int]):
     # 绘制箱子
     for box in container["boxes"]:
         box_faces = cuboid_faces(box["x"], box["y"], box["z"], box["lx"], box["ly"], box["lz"])
-        ax.add_collection3d(Poly3DCollection(box_faces, edgecolors="black", linewidths=0.5, alpha=0.5))
+        ax.add_collection3d(Poly3DCollection(box_faces, facecolors=get_color(box), edgecolors="black", linewidths=0.5, alpha=0.5))
 
     # 设置轴比例和范围
     ax.set_box_aspect([max_dims[0], max_dims[1], max_dims[2]])

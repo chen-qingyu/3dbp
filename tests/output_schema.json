@@ -43,7 +43,8 @@
           "id": { "type": "string" },
           "lx": { "type": "integer", "minimum": 1 },
           "ly": { "type": "integer", "minimum": 1 },
-          "lz": { "type": "integer", "minimum": 1 }
+          "lz": { "type": "integer", "minimum": 1 },
+          "group": { "type": "string" }
         }
       }
     }

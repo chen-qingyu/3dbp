@@ -16,7 +16,8 @@ struct Box
     int lx, ly, lz; // 箱子尺寸
 
     // 可选字段
-    double weight; // 箱子重量
+    double weight;     // 箱子重量
+    std::string group; // 箱子分组
 
     // 输出字段
     int x, y, z; // 箱子位置
@@ -39,6 +40,7 @@ struct Box
         b.lz = j["lz"];
 
         b.weight = j.value("weight", NAN);
+        b.group = j.value("group", "");
 
         // 测试中反序列化可能会用到
         b.x = j.value("x", -1);
@@ -52,6 +54,11 @@ struct Box
         j["lx"] = b.lx;
         j["ly"] = b.ly;
         j["lz"] = b.lz;
+
+        if (b.group != "")
+        {
+            j["group"] = b.group;
+        }
 
         // 如果箱子成功装载了才输出位置信息
         if (b.x != -1 && b.y != -1 && b.z != -1)

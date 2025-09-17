@@ -55,6 +55,7 @@ _Pack All~_
 | `ly`     | integer | 箱子的宽度         |
 | `lz`     | integer | 箱子的高度         |
 | `weight` | number  | 箱子的重量（可选） |
+| `group`  | string  | 箱子的分组（可选） |
 
 #### Input (输入数据)
 
@@ -83,15 +84,16 @@ _Pack All~_
 
 #### Box (箱子)
 
-| 字段名 | 类型    | 描述             |
-| ------ | ------- | ---------------- |
-| `id`   | string  | 箱子的唯一标识符 |
-| `lx`   | integer | 箱子的长度       |
-| `ly`   | integer | 箱子的宽度       |
-| `lz`   | integer | 箱子的高度       |
-| `x`    | integer | 装载的 X 轴坐标  |
-| `y`    | integer | 装载的 Y 轴坐标  |
-| `z`    | integer | 装载的 Z 轴坐标  |
+| 字段名  | 类型    | 描述               |
+| ------- | ------- | ------------------ |
+| `id`    | string  | 箱子的唯一标识符   |
+| `lx`    | integer | 箱子的长度         |
+| `ly`    | integer | 箱子的宽度         |
+| `lz`    | integer | 箱子的高度         |
+| `x`     | integer | 装载的 X 轴坐标    |
+| `y`     | integer | 装载的 Y 轴坐标    |
+| `z`     | integer | 装载的 Z 轴坐标    |
+| `group` | string  | 箱子的分组（可选） |
 
 #### Output (输出数据)
 
