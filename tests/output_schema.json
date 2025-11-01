@@ -1,40 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["containers", "unpacked_boxes"],
+  "required": ["box_types", "containers", "unpacked_boxes"],
   "properties": {
-    "containers": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["id", "lx", "ly", "lz", "boxes", "volume_rate"],
-        "properties": {
-          "id": { "type": "string" },
-          "lx": { "type": "integer", "minimum": 1 },
-          "ly": { "type": "integer", "minimum": 1 },
-          "lz": { "type": "integer", "minimum": 1 },
-          "boxes": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["id", "lx", "ly", "lz", "x", "y", "z"],
-              "properties": {
-                "id": { "type": "string" },
-                "lx": { "type": "integer", "minimum": 1 },
-                "ly": { "type": "integer", "minimum": 1 },
-                "lz": { "type": "integer", "minimum": 1 },
-                "x": { "type": "integer", "minimum": 0 },
-                "y": { "type": "integer", "minimum": 0 },
-                "z": { "type": "integer", "minimum": 0 }
-              }
-            }
-          },
-          "volume_rate": { "type": "number", "minimum": 0, "maximum": 1 },
-          "weight_rate": { "type": "number", "minimum": 0, "maximum": 1 }
-        }
-      }
-    },
-    "unpacked_boxes": {
+    "box_types": {
       "type": "array",
       "items": {
         "type": "object",
@@ -43,7 +12,64 @@
           "id": { "type": "string" },
           "lx": { "type": "integer", "minimum": 1 },
           "ly": { "type": "integer", "minimum": 1 },
+          "lz": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "containers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "lx",
+          "ly",
+          "lz",
+          "payload",
+          "boxes",
+          "volume_rate",
+          "weight_rate"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "lx": { "type": "integer", "minimum": 1 },
+          "ly": { "type": "integer", "minimum": 1 },
           "lz": { "type": "integer", "minimum": 1 },
+          "payload": { "type": ["number", "null"], "minimum": 0 },
+          "boxes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "type", "weight", "group", "x", "y", "z"],
+              "properties": {
+                "id": { "type": "string" },
+                "type": { "type": "string" },
+                "weight": { "type": ["number", "null"], "minimum": 0 },
+                "group": { "type": "string" },
+                "x": { "type": "integer", "minimum": 0 },
+                "y": { "type": "integer", "minimum": 0 },
+                "z": { "type": "integer", "minimum": 0 }
+              }
+            }
+          },
+          "volume_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+          "weight_rate": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "unpacked_boxes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "weight", "group"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "weight": { "type": "number", "minimum": 0 },
           "group": { "type": "string" }
         }
       }

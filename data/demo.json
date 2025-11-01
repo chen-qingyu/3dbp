@@ -15,44 +15,48 @@
       "payload": 1000
     }
   ],
+  "box_types": [
+    {
+      "id": "t1",
+      "lx": 10,
+      "ly": 10,
+      "lz": 10
+    },
+    {
+      "id": "t2",
+      "lx": 100,
+      "ly": 100,
+      "lz": 100
+    }
+  ],
   "boxes": [
     {
       "id": "b1",
-      "lx": 10,
-      "ly": 10,
-      "lz": 10,
+      "type": "t1",
       "weight": 100,
       "group": "A"
     },
     {
       "id": "b2",
-      "lx": 10,
-      "ly": 10,
-      "lz": 10,
+      "type": "t1",
       "weight": 100,
       "group": "A"
     },
     {
       "id": "b3",
-      "lx": 10,
-      "ly": 10,
-      "lz": 10,
+      "type": "t1",
       "weight": 100,
       "group": "B"
     },
     {
       "id": "b4",
-      "lx": 100,
-      "ly": 100,
-      "lz": 100,
+      "type": "t2",
       "weight": 500,
       "group": "A"
     },
     {
       "id": "b5",
-      "lx": 100,
-      "ly": 100,
-      "lz": 100,
+      "type": "t2",
       "weight": 500,
       "group": "B"
     }

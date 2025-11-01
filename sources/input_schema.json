@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["containers", "boxes"],
+  "required": ["containers", "box_types", "boxes"],
   "properties": {
     "containers": {
       "type": "array",
@@ -17,7 +17,7 @@
         }
       }
     },
-    "boxes": {
+    "box_types": {
       "type": "array",
       "items": {
         "type": "object",
@@ -26,7 +26,18 @@
           "id": { "type": "string" },
           "lx": { "type": "integer", "minimum": 1 },
           "ly": { "type": "integer", "minimum": 1 },
-          "lz": { "type": "integer", "minimum": 1 },
+          "lz": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "boxes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
           "weight": { "type": "number", "minimum": 0 },
           "group": { "type": "string" }
         }

@@ -78,7 +78,7 @@ def cuboid_faces(x: int, y: int, z: int, l: int, w: int, h: int) -> list[list[li
     ]
 
 
-def draw(container: dict, ax, max_dims: tuple[int, int, int]):
+def draw(container: dict, ax, max_dims: tuple[int, int, int], box_types: dict):
     """绘制容器和箱子"""
     # 绘制容器
     cl, cw, ch = container["lx"], container["ly"], container["lz"]
@@ -88,7 +88,8 @@ def draw(container: dict, ax, max_dims: tuple[int, int, int]):
 
     # 绘制箱子
     for box in container["boxes"]:
-        box_faces = cuboid_faces(box["x"], box["y"], box["z"], box["lx"], box["ly"], box["lz"])
+        box_type = box_types[box["type"]]
+        box_faces = cuboid_faces(box["x"], box["y"], box["z"], box_type["lx"], box_type["ly"], box_type["lz"])
         ax.add_collection3d(Poly3DCollection(box_faces, facecolors=get_color(box), edgecolors="black", linewidths=0.5, alpha=0.5))
 
     # 设置轴比例和范围
@@ -97,7 +98,7 @@ def draw(container: dict, ax, max_dims: tuple[int, int, int]):
 
     # 显示容器信息和利用率
     info = f"Volume Rate: {container['volume_rate']:.2%}"
-    if 'weight_rate' in container:
+    if container['weight_rate'] is not None:
         info += f", Weight Rate: {container['weight_rate']:.2%}"
     ax.text2D(0.5, -0.05, info, transform=ax.transAxes, ha="center")
 
@@ -112,8 +113,12 @@ def calc_max_dims(containers: list[dict]) -> tuple[int, int, int]:
     return (max_l, max_w, max_h)
 
 
-def main(containers: list[dict]):
+def main(data: dict):
     """绘制3D装箱图主函数"""
+    containers = data["containers"]
+    # 创建box_types映射表
+    box_types = {bt["id"]: bt for bt in data["box_types"]}
+
     # 计算绘图相关参数
     max_dims = calc_max_dims(containers)
     n = len(containers)
@@ -127,7 +132,7 @@ def main(containers: list[dict]):
     # 绘制每个装箱方案
     for i, container in enumerate(containers):
         ax = fig.add_subplot(rows, cols, i + 1, projection="3d")
-        draw(container, ax, max_dims)
+        draw(container, ax, max_dims, box_types)
         plot_axes.append(ax)
 
     # 创建视图切换按钮
@@ -146,6 +151,6 @@ if __name__ == "__main__":
         sys.exit(1)
     # 加载装箱方案数据
     with open(sys.argv[1], "r", encoding="utf-8") as f:
-        containers = json.load(f)["containers"]
+        data = json.load(f)
     # 绘制3D装箱图
-    main(containers)
+    main(data)

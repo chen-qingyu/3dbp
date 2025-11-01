@@ -19,6 +19,7 @@ private:
     std::vector<Box> unpacked_boxes_;   // 待装载箱子
     std::vector<Box> packed_boxes_;     // 已装载箱子
     Constraint constraint_;             // 约束检查
+    Output output_;                     // 装箱结果
 
     /// 尝试装载箱子
     /// @param box 待装载的箱子（会被修改位置）
@@ -31,9 +32,9 @@ private:
         // 在已装载箱子的右方、后方、上方生成候选点
         for (const auto& box : packed_boxes_)
         {
-            candidates.emplace_back(box.x + box.lx, box.y, box.z); // 右方
-            candidates.emplace_back(box.x, box.y + box.ly, box.z); // 后方
-            candidates.emplace_back(box.x, box.y, box.z + box.lz); // 上方
+            candidates.emplace_back(box.x + box.type->lx, box.y, box.z); // 右方
+            candidates.emplace_back(box.x, box.y + box.type->ly, box.z); // 后方
+            candidates.emplace_back(box.x, box.y, box.z + box.type->lz); // 上方
         }
 
         // 排序候选位置，优先级：z（高度/上方）> y（宽度/后方）> x（长度/右方）
@@ -115,7 +116,11 @@ public:
         , packed_boxes_()
         , container_()
         , constraint_(container_, packed_boxes_)
+        , output_()
     {
+        // 原封不动输出箱型信息
+        output_.box_types = input.box_types;
+
         // 箱子按体积从大到小排序
         std::ranges::sort(unpacked_boxes_, [](const auto& a, const auto& b)
                           { return a.volume() > b.volume(); });
@@ -129,8 +134,6 @@ public:
     /// @return 装箱结果
     Output run()
     {
-        Output output;
-
         // 逐个容器装箱，直到容器用完或箱子装完
         while (!containers_.empty() && !unpacked_boxes_.empty())
         {
@@ -160,7 +163,7 @@ public:
             container_.boxes = packed_boxes_;
             container_.volume_rate = calculate_volume_rate();
             container_.weight_rate = calculate_weight_rate();
-            output.containers.push_back(container_);
+            output_.containers.push_back(container_);
         }
         // 重置未装载箱子的位置
         for (auto& box : unpacked_boxes_)
@@ -169,10 +172,10 @@ public:
             box.y = -1;
             box.z = -1;
         }
-        output.unpacked_boxes = unpacked_boxes_;
-        spdlog::info("Unpacked {} boxes.", output.unpacked_boxes.size());
+        output_.unpacked_boxes = unpacked_boxes_;
+        spdlog::info("Unpacked {} boxes.", output_.unpacked_boxes.size());
 
-        return output;
+        return output_;
     }
 };
 

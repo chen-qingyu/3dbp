@@ -31,25 +31,45 @@ def parse_br_file(file):
             "lz": lz,
         }
 
-        # 创建箱子
-        boxes = []
-        box_id = 1
-        for _ in range(num_box_types):
+        # 创建箱子类型
+        box_types = []
+        box_type_map = {}
+        for i in range(num_box_types):
             parts = list(map(int, lines[current_line].split()))
             current_line += 1
+            box_type = f"t{i+1}"
 
+            box_types.append({
+                "id": box_type,
+                "lx": parts[1],
+                "ly": parts[3],
+                "lz": parts[5]
+            })
+            box_type_map[i] = box_type
+
+        # 创建箱子实例
+        boxes = []
+        box_id = 1
+        # 再次遍历以获取数量并生成实例
+        current_line -= num_box_types
+        for i in range(num_box_types):
+            parts = list(map(int, lines[current_line].split()))
+            current_line += 1
             # 为每个数量创建一个箱子实例
             for _ in range(parts[7]):
                 boxes.append({
                     "id": f"b{box_id}",
-                    "lx": parts[1],
-                    "ly": parts[3],
-                    "lz": parts[5],
+                    "type": box_type_map[i]
                 })
                 box_id += 1
 
         # 创建单个问题的结果
-        results.append((problem_num, {"containers": [container], "boxes": boxes}))
+        result = {
+            "containers": [container],
+            "box_types": box_types,
+            "boxes": boxes,
+        }
+        results.append((problem_num, result))
 
     return results
 

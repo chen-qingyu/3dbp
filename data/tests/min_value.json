@@ -8,12 +8,18 @@
       "payload": 0
     }
   ],
+  "box_types": [
+    {
+      "id": "t1",
+      "lx": 1,
+      "ly": 1,
+      "lz": 1
+    }
+  ],
   "boxes": [
     {
       "id": "b1",
-      "lx": 1,
-      "ly": 1,
-      "lz": 1,
+      "type": "t1",
       "weight": 0
     }
   ]
