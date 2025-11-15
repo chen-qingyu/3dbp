@@ -82,7 +82,7 @@ def main():
         return  # 若已存在则跳过处理
 
     os.makedirs('data/br_json')
-    for i in range(1, 11):
+    for i in range(16):
         br_path = f'data/br_txt/br{i}.txt'
         results = parse_br_file(br_path)
 
