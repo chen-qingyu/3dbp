@@ -10,12 +10,26 @@
 
 using json = nlohmann::json;
 
+enum class Orient
+{
+    UNDEFINED = -1,
+    XYZ = 0,
+    YXZ = 1,
+    XZY = 2,
+    ZXY = 3,
+    YZX = 4,
+    ZYX = 5,
+};
+
 /// Represents a box type.
 struct BoxType
 {
     // 必选字段
     std::string id; // 箱型ID
     int lx, ly, lz; // 箱型尺寸
+
+    // 可选字段
+    std::vector<Orient> orients; // 箱型允许的摆放方向
 
     bool operator==(const BoxType& other) const
     {
@@ -28,6 +42,7 @@ struct BoxType
         bt.lx = j["lx"];
         bt.ly = j["ly"];
         bt.lz = j["lz"];
+        bt.orients = j.value("orients", std::vector{Orient::XYZ, Orient::YXZ});
     }
 
     friend void to_json(json& j, const BoxType& bt)
@@ -51,10 +66,12 @@ struct Box
     std::string group; // 箱子分组
 
     // 输出字段
-    int x, y, z; // 箱子位置
+    int x, y, z;   // 箱子位置
+    Orient orient; // 箱子摆放方向
 
     // 内部属性
     std::shared_ptr<BoxType> type; // 箱子类型指针
+    int lx, ly, lz;                // 箱子在当前方向下的尺寸
 
     Box() = default;
 
@@ -66,13 +83,55 @@ struct Box
         , x(x)
         , y(y)
         , z(z)
+        , orient(Orient::UNDEFINED)
         , type(std::move(type))
+        , lx(this->type->lx)
+        , ly(this->type->ly)
+        , lz(this->type->lz)
     {
     }
 
     long long volume() const
     {
         return static_cast<long long>(type->lx) * type->ly * type->lz;
+    }
+
+    void set_orient(Orient orient)
+    {
+        this->orient = orient;
+        switch (orient)
+        {
+            case Orient::XYZ:
+                lx = type->lx;
+                ly = type->ly;
+                lz = type->lz;
+                break;
+            case Orient::YXZ:
+                lx = type->ly;
+                ly = type->lx;
+                lz = type->lz;
+                break;
+            case Orient::XZY:
+                lx = type->lx;
+                ly = type->lz;
+                lz = type->ly;
+                break;
+            case Orient::ZXY:
+                lx = type->lz;
+                ly = type->lx;
+                lz = type->ly;
+                break;
+            case Orient::YZX:
+                lx = type->ly;
+                ly = type->lz;
+                lz = type->lx;
+                break;
+            case Orient::ZYX:
+                lx = type->lz;
+                ly = type->ly;
+                lz = type->lx;
+                break;
+        }
     }
 
     bool operator==(const Box& other) const
@@ -101,6 +160,7 @@ struct Box
             j["x"] = b.x;
             j["y"] = b.y;
             j["z"] = b.z;
+            j["orient"] = static_cast<int>(b.orient);
         }
     }
 };

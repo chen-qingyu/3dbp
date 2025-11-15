@@ -55,15 +55,17 @@ def draw(container: dict, ax, max_dims: tuple[int, int, int], box_types: dict):
     """绘制容器和箱子"""
     # 绘制容器
     cl, cw, ch = container["lx"], container["ly"], container["lz"]
-    container_faces = cuboid_faces(0, 0, 0, cl, cw, ch)
+    container_faces = get_cuboid_faces(0, 0, 0, cl, cw, ch)
     ax.add_collection3d(Poly3DCollection(container_faces, edgecolors="black", alpha=0.1))
     ax.set_title(f"Container {container['id']}")
 
     # 绘制箱子
     for box in container["boxes"]:
         box_type = box_types[box["type"]]
-        box_faces = cuboid_faces(box["x"], box["y"], box["z"], box_type["lx"], box_type["ly"], box_type["lz"])
-        ax.add_collection3d(Poly3DCollection(box_faces, facecolors=get_color(box), edgecolors="black", linewidths=0.5, alpha=0.5))
+        l, w, h = get_oriented_dim(box_type["lx"], box_type["ly"], box_type["lz"], box["orient"])
+        box_faces = get_cuboid_faces(box["x"], box["y"], box["z"], l, w, h)
+        color = get_color(box)
+        ax.add_collection3d(Poly3DCollection(box_faces, facecolors=color, edgecolors="black", linewidths=0.5, alpha=0.5))
 
     # 设置轴比例和范围
     ax.set_box_aspect([max_dims[0], max_dims[1], max_dims[2]])
@@ -76,16 +78,20 @@ def draw(container: dict, ax, max_dims: tuple[int, int, int], box_types: dict):
     ax.text2D(0.5, -0.05, info, transform=ax.transAxes, ha="center")
 
 
-def get_color(box: dict, colors={}):
-    """颜色映射"""
-    base = list(TABLEAU_COLORS.values())
-    group = box["group"]
-    if group not in colors:
-        colors[group] = base[len(colors) % len(base)]
-    return colors[group]
+def get_oriented_dim(l: int, w: int, h: int, orient: int) -> tuple[int, int, int]:
+    """根据orient获取实际放置的尺寸"""
+    orient_map = {
+        0: (l, w, h),
+        1: (w, l, h),
+        2: (l, h, w),
+        3: (h, l, w),
+        4: (w, h, l),
+        5: (h, w, l),
+    }
+    return orient_map[orient]
 
 
-def cuboid_faces(x: int, y: int, z: int, l: int, w: int, h: int) -> list[list[list[int]]]:
+def get_cuboid_faces(x: int, y: int, z: int, l: int, w: int, h: int) -> list[list[list[int]]]:
     """将长方体转为 6 个面片"""
     pts = [[x, y, z], [x + l, y, z], [x + l, y + w, z], [x, y + w, z],
            [x, y, z + h], [x + l, y, z + h], [x + l, y + w, z + h], [x, y + w, z + h]]
@@ -97,6 +103,15 @@ def cuboid_faces(x: int, y: int, z: int, l: int, w: int, h: int) -> list[list[li
         [pts[1], pts[2], pts[6], pts[5]],  # right
         [pts[0], pts[3], pts[7], pts[4]],  # left
     ]
+
+
+def get_color(box: dict, colors={}):
+    """颜色映射"""
+    base = list(TABLEAU_COLORS.values())
+    group = box["group"]
+    if group not in colors:
+        colors[group] = base[len(colors) % len(base)]
+    return colors[group]
 
 
 def calc_max_dims(containers: list[dict]) -> tuple[int, int, int]:

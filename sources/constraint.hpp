@@ -24,9 +24,9 @@ public:
     /// @return 是否满足约束
     bool check_bound(const Box& box) const
     {
-        return (box.x + box.type->lx <= container_.lx &&
-                box.y + box.type->ly <= container_.ly &&
-                box.z + box.type->lz <= container_.lz);
+        return (box.x + box.lx <= container_.lx &&
+                box.y + box.ly <= container_.ly &&
+                box.z + box.lz <= container_.lz);
     }
 
     /// 约束2：箱子不能与已装载的箱子重叠
@@ -37,9 +37,9 @@ public:
         // 遍历所有已装载的箱子
         for (const auto& packed_box : boxes_)
         {
-            bool x_overlap = (box.x < packed_box.x + packed_box.type->lx) && (packed_box.x < box.x + box.type->lx);
-            bool y_overlap = (box.y < packed_box.y + packed_box.type->ly) && (packed_box.y < box.y + box.type->ly);
-            bool z_overlap = (box.z < packed_box.z + packed_box.type->lz) && (packed_box.z < box.z + box.type->lz);
+            bool x_overlap = (box.x < packed_box.x + packed_box.lx) && (packed_box.x < box.x + box.lx);
+            bool y_overlap = (box.y < packed_box.y + packed_box.ly) && (packed_box.y < box.y + box.ly);
+            bool z_overlap = (box.z < packed_box.z + packed_box.lz) && (packed_box.z < box.z + box.lz);
             // 三个方向都重叠才是重叠
             if (x_overlap && y_overlap && z_overlap)
             {
@@ -65,7 +65,7 @@ public:
         for (const auto& support_box : boxes_)
         {
             // 只考虑正好在当前箱子下方平面的箱子
-            if (support_box.z + support_box.type->lz != box.z)
+            if (support_box.z + support_box.lz != box.z)
             {
                 continue;
             }
@@ -73,8 +73,8 @@ public:
             // 计算重叠的矩形区域
             int overlap_x1 = std::max(box.x, support_box.x);
             int overlap_y1 = std::max(box.y, support_box.y);
-            int overlap_x2 = std::min(box.x + box.type->lx, support_box.x + support_box.type->lx);
-            int overlap_y2 = std::min(box.y + box.type->ly, support_box.y + support_box.type->ly);
+            int overlap_x2 = std::min(box.x + box.lx, support_box.x + support_box.lx);
+            int overlap_y2 = std::min(box.y + box.ly, support_box.y + support_box.ly);
 
             if (overlap_x1 < overlap_x2 && overlap_y1 < overlap_y2)
             {
@@ -83,7 +83,7 @@ public:
         }
 
         // 要求底面被完全支撑
-        return actual_area >= box.type->lx * box.type->ly;
+        return actual_area >= box.lx * box.ly;
     }
 
     /// 约束4：箱子总重量不能超过容器载重（若输入存在载重限制）
