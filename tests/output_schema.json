@@ -40,7 +40,16 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["id", "type", "weight", "group", "x", "y", "z"],
+              "required": [
+                "id",
+                "type",
+                "weight",
+                "group",
+                "x",
+                "y",
+                "z",
+                "orient"
+              ],
               "properties": {
                 "id": { "type": "string" },
                 "type": { "type": "string" },
@@ -48,7 +57,8 @@
                 "group": { "type": "string" },
                 "x": { "type": "integer", "minimum": 0 },
                 "y": { "type": "integer", "minimum": 0 },
-                "z": { "type": "integer", "minimum": 0 }
+                "z": { "type": "integer", "minimum": 0 },
+                "orient": { "type": "integer", "enum": [0, 1, 2, 3, 4, 5] }
               }
             }
           },
@@ -69,7 +79,7 @@
         "properties": {
           "id": { "type": "string" },
           "type": { "type": "string" },
-          "weight": { "type": "number", "minimum": 0 },
+          "weight": { "type": ["number", "null"], "minimum": 0 },
           "group": { "type": "string" }
         }
       }

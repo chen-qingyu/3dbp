@@ -39,11 +39,22 @@ def parse_br_file(file):
             current_line += 1
             box_type = f"t{i+1}"
 
+            # 解析尺寸和方向
+            lx, ly, lz = parts[1], parts[3], parts[5]
+            orients = []
+            if parts[6] == 1:  # 高边可垂直
+                orients += [0, 1]
+            if parts[4] == 1:  # 宽边可垂直
+                orients += [2, 3]
+            if parts[2] == 1:  # 长边可垂直
+                orients += [4, 5]
+
             box_types.append({
                 "id": box_type,
-                "lx": parts[1],
-                "ly": parts[3],
-                "lz": parts[5]
+                "lx": lx,
+                "ly": ly,
+                "lz": lz,
+                "orients": orients,
             })
             box_type_map[i] = box_type
 

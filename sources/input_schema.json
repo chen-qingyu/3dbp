@@ -26,7 +26,14 @@
           "id": { "type": "string" },
           "lx": { "type": "integer", "minimum": 1 },
           "ly": { "type": "integer", "minimum": 1 },
-          "lz": { "type": "integer", "minimum": 1 }
+          "lz": { "type": "integer", "minimum": 1 },
+          "orients": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "enum": [0, 1, 2, 3, 4, 5]
+            }
+          }
         }
       }
     },

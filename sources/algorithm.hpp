@@ -22,7 +22,7 @@ private:
     Output output_;                     // 装箱结果
 
     /// 尝试装载箱子
-    /// @param box 待装载的箱子（会被修改位置）
+    /// @param box 待装载的箱子（会被修改位置和方向）
     /// @return 是否成功装载
     bool try_pack(Box& box) const
     {
@@ -32,25 +32,31 @@ private:
         // 在已装载箱子的右方、后方、上方生成候选点
         for (const auto& box : packed_boxes_)
         {
-            candidates.emplace_back(box.x + box.type->lx, box.y, box.z); // 右方
-            candidates.emplace_back(box.x, box.y + box.type->ly, box.z); // 后方
-            candidates.emplace_back(box.x, box.y, box.z + box.type->lz); // 上方
+            candidates.emplace_back(box.x + box.lx, box.y, box.z); // 右方
+            candidates.emplace_back(box.x, box.y + box.ly, box.z); // 后方
+            candidates.emplace_back(box.x, box.y, box.z + box.lz); // 上方
         }
 
         // 排序候选位置，优先级：z（高度/上方）> y（宽度/后方）> x（长度/右方）
         std::ranges::sort(candidates);
 
-        // 尝试每个候选位置
-        for (const auto& candidate : candidates)
+        // 尝试每个允许的方向
+        for (Orient orient : box.type->orients)
         {
-            box.x = std::get<0>(candidate);
-            box.y = std::get<1>(candidate);
-            box.z = std::get<2>(candidate);
+            box.set_orient(orient);
 
-            // 检查所有约束
-            if (constraint_.check_constraints(box))
+            // 尝试每个候选位置
+            for (const auto& candidate : candidates)
             {
-                return true; // 找到有效位置
+                box.x = std::get<0>(candidate);
+                box.y = std::get<1>(candidate);
+                box.z = std::get<2>(candidate);
+
+                // 检查所有约束
+                if (constraint_.check_constraints(box))
+                {
+                    return true; // 找到有效位置
+                }
             }
         }
 
