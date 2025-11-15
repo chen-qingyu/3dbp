@@ -88,7 +88,7 @@ def main():
 
         # 每个问题都生成一个JSON文件
         for problem_num, result in results:
-            with open(f'data/br_json/br{i}_{problem_num}.json', 'w') as f:
+            with open(f'data/br_json/br{i:02d}_{problem_num:03d}.json', 'w') as f:
                 json.dump(result, f, indent=2)
         print(f"OK: {br_path} -> {len(results)} json files")
 
