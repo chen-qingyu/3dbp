@@ -37,8 +37,11 @@ private:
             candidates.emplace_back(box.x, box.y, box.z + box.lz); // 上方
         }
 
-        // 排序候选位置，优先级：z（高度/上方）> y（宽度/后方）> x（长度/右方）
+        // 候选点排序，优先级：z（高度/上方）> y（宽度/后方）> x（长度/右方）
         std::ranges::sort(candidates);
+        // 候选点去重
+        auto [first, last] = std::ranges::unique(candidates);
+        candidates.erase(first, candidates.end());
 
         // 尝试每个允许的方向
         for (Orient orient : box.type->orients)
