@@ -14,21 +14,15 @@
 /// @param input 输入JSON对象
 void validate_schema(const nlohmann::json& input)
 {
-    using nlohmann::json;
     try
     {
-        // 加载Schema
-        json schema = json::parse(std::ifstream("sources/input_schema.json"));
-
-        // 创建校验器
-        nlohmann::json_schema::json_validator validator(schema);
-
-        // 校验数据
-        validator.validate(input);
+        auto file = std::ifstream("sources/input_schema.json");  // 读取文件
+        nlohmann::json schema = nlohmann::json::parse(file);     // 加载Schema
+        nlohmann::json_schema::json_validator validator(schema); // 创建校验器
+        validator.validate(input);                               // 校验数据
     }
-    catch (const std::exception& e)
+    catch (const std::exception& e) // 校验失败，退出程序
     {
-        // 校验失败，退出程序
         spdlog::error("JSON validation failed: {}", e.what());
         exit(1);
     }

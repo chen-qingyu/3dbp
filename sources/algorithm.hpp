@@ -44,16 +44,14 @@ private:
         candidates.erase(first, candidates.end());
 
         // 尝试每个允许的方向
-        for (Orient orient : box.type->orients)
+        for (auto orient : box.type->orients)
         {
             box.set_orient(orient);
 
             // 尝试每个候选位置
             for (const auto& candidate : candidates)
             {
-                box.x = std::get<0>(candidate);
-                box.y = std::get<1>(candidate);
-                box.z = std::get<2>(candidate);
+                std::tie(box.x, box.y, box.z) = candidate;
 
                 // 检查所有约束
                 if (constraint_.check_constraints(box))
