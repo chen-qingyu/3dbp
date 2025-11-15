@@ -9,14 +9,13 @@
 TEST_CASE("Benchmark", "[bench]")
 {
     spdlog::set_level(spdlog::level::off);
-    int count = 0;
     for (const auto& entry : std::filesystem::directory_iterator("data/br_json"))
     {
-        if (++count > 10)
+        if (entry.path().string().find("001") == std::string::npos)
         {
-            break;
+            continue;
         }
-        BENCHMARK(entry.path().string())
+        BENCHMARK(entry.path().filename().string())
         {
             Input input = json::parse(std::ifstream(entry.path()));
             Output output = Algorithm(input).run();
