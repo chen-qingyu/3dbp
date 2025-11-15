@@ -1,5 +1,22 @@
 Statistics Summary
 ===
+br00: 0.727408 (100 cases)
+br01: 0.776186 (100 cases)
+br02: 0.779443 (100 cases)
+br03: 0.784538 (100 cases)
+br04: 0.777237 (100 cases)
+br05: 0.781305 (100 cases)
+br06: 0.771380 (100 cases)
+br07: 0.773341 (100 cases)
+br08: 0.764403 (100 cases)
+br09: 0.749880 (100 cases)
+br10: 0.734280 (100 cases)
+br11: 0.724776 (100 cases)
+br12: 0.710842 (100 cases)
+br13: 0.694930 (100 cases)
+br14: 0.687634 (100 cases)
+br15: 0.675774 (100 cases)
+===
 Total files processed: 1600
 Average volume rate: 0.744585
 Minimum volume rate: 0.505606 (file: br00_007.json)

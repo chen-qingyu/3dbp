@@ -1,7 +1,8 @@
 #include <algorithm>
 #include <filesystem>
+#include <format>
 #include <fstream>
-#include <iomanip>
+#include <map>
 #include <numeric>
 
 #include <catch2/catch_test_macros.hpp>
@@ -30,8 +31,12 @@ TEST_CASE("Report", "[report]")
     }
 
     // Calculate statistics
-    double sum = std::accumulate(results.begin(), results.end(), 0.0,
-                                 [](double sum, const auto& result)
+    std::map<std::string, std::vector<double>> br_file;
+    for (const auto& [name, rate] : results)
+    {
+        br_file[name.substr(0, 4)].push_back(rate);
+    }
+    double sum = std::accumulate(results.begin(), results.end(), 0.0, [](double sum, const auto& result)
                                  { return sum + result.second; });
     double average = sum / results.size();
 
@@ -40,11 +45,16 @@ TEST_CASE("Report", "[report]")
                                                 { return a.second < b.second; });
 
     std::ofstream report("benches/report.txt");
-    report << std::fixed << std::setprecision(6);
     report << "Statistics Summary\n";
     report << "===\n";
-    report << "Total files processed: " << results.size() << "\n";
-    report << "Average volume rate: " << average << "\n";
-    report << "Minimum volume rate: " << min_it->second << " (file: " << min_it->first << ")\n";
-    report << "Maximum volume rate: " << max_it->second << " (file: " << max_it->first << ")\n";
+    for (const auto& [file, rates] : br_file)
+    {
+        double file_avg = std::accumulate(rates.begin(), rates.end(), 0.0) / rates.size();
+        report << std::format("{}: {:.6f} ({} cases)\n", file, file_avg, rates.size());
+    }
+    report << "===\n";
+    report << std::format("Total files processed: {}\n", results.size());
+    report << std::format("Average volume rate: {:.6f}\n", average);
+    report << std::format("Minimum volume rate: {:.6f} (file: {})\n", min_it->second, min_it->first);
+    report << std::format("Maximum volume rate: {:.6f} (file: {})\n", max_it->second, max_it->first);
 }
