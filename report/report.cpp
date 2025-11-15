@@ -5,11 +5,9 @@
 #include <map>
 #include <numeric>
 
-#include <catch2/catch_test_macros.hpp>
-
 #include "../sources/algorithm.hpp"
 
-TEST_CASE("Report", "[report]")
+int main()
 {
     spdlog::set_level(spdlog::level::off);
 
@@ -23,7 +21,7 @@ TEST_CASE("Report", "[report]")
     }
 
     // Write CSV
-    std::ofstream csv("benches/report.csv");
+    std::ofstream csv("report/report.csv");
     csv << "file_name,volume_rate\n";
     for (const auto& [name, rate] : results)
     {
@@ -44,7 +42,7 @@ TEST_CASE("Report", "[report]")
                                                 [](const auto& a, const auto& b)
                                                 { return a.second < b.second; });
 
-    std::ofstream report("benches/report.txt");
+    std::ofstream report("report/report.txt");
     report << "Statistics Summary\n";
     report << "===\n";
     for (const auto& [file, rates] : br_file)
@@ -57,4 +55,6 @@ TEST_CASE("Report", "[report]")
     report << std::format("Average volume rate: {:.6f}\n", average);
     report << std::format("Minimum volume rate: {:.6f} (file: {})\n", min_it->second, min_it->first);
     report << std::format("Maximum volume rate: {:.6f} (file: {})\n", max_it->second, max_it->first);
+
+    return 0;
 }

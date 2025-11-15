@@ -180,11 +180,8 @@ opencppcoverage --sources sources --export_type html:build/coverage -- ./build/w
 xmake config -m release
 
 # 性能测试
-xmake run bench --benchmark-no-analysis -i [bench]
+xmake run bench --benchmark-no-analysis
 
 # 生成报告
-xmake run bench -i [report]
-
-# 生成 cmake 配置文件
-xmake project -k cmake
+xmake run report
 ```

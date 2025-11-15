@@ -6,7 +6,7 @@
 
 #include "../sources/algorithm.hpp"
 
-TEST_CASE("Benchmark", "[bench]")
+TEST_CASE("benchmark")
 {
     spdlog::set_level(spdlog::level::off);
     for (const auto& entry : std::filesystem::directory_iterator("data/br_json"))
@@ -19,7 +19,7 @@ TEST_CASE("Benchmark", "[bench]")
         {
             Input input = json::parse(std::ifstream(entry.path()));
             Output output = Algorithm(input).run();
-            return output.containers.size(); // 返回方案数量，防止优化
+            return output.containers.size(); // 防止优化
         };
     }
 }
