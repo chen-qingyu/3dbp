@@ -30,11 +30,11 @@ private:
         std::vector<std::tuple<int, int, int>> candidates{{0, 0, 0}};
 
         // 在已装载箱子的右方、后方、上方生成候选点
-        for (const auto& box : packed_boxes_)
+        for (const auto& b : packed_boxes_)
         {
-            candidates.emplace_back(box.x + box.lx, box.y, box.z); // 右方
-            candidates.emplace_back(box.x, box.y + box.ly, box.z); // 后方
-            candidates.emplace_back(box.x, box.y, box.z + box.lz); // 上方
+            candidates.emplace_back(b.x + b.lx, b.y, b.z); // 右方
+            candidates.emplace_back(b.x, b.y + b.ly, b.z); // 后方
+            candidates.emplace_back(b.x, b.y, b.z + b.lz); // 上方
         }
 
         // 候选点排序，优先级：z（高度/上方）> y（宽度/后方）> x（长度/右方）
