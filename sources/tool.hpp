@@ -12,7 +12,7 @@
 
 /// 校验JSON输入数据格式
 /// @param input 输入JSON对象
-void validate_schema(const nlohmann::json& input)
+static void validate_schema(const nlohmann::json& input)
 {
     try
     {
@@ -30,7 +30,7 @@ void validate_schema(const nlohmann::json& input)
 
 /// 校验输入数据的逻辑关系
 /// @param input 输入Input对象
-void validate_logic(const Input& input)
+static void validate_logic(const Input& input)
 {
     // 规则1：容器类型id全局唯一
     std::unordered_set<std::string> container_type_ids;
@@ -53,6 +53,30 @@ void validate_logic(const Input& input)
             exit(1);
         }
     }
+}
+
+/// 解析JSON输入文件并校验
+/// @param input_file 输入文件路径
+/// @return Input对象
+Input parse_input(const std::string& input_file)
+{
+    // 读取文件
+    std::ifstream file(input_file);
+    if (!file.is_open())
+    {
+        spdlog::error("Failed to open input file \"{}\".", input_file);
+        exit(1);
+    }
+    nlohmann::json input_json = nlohmann::json::parse(file);
+    file.close();
+
+    // 校验输入
+    validate_schema(input_json);
+    Input input_obj = input_json;
+    validate_logic(input_obj);
+    spdlog::info("Successfully validated input \"{}\".", input_file);
+
+    return input_obj;
 }
 
 #endif // TOOL_HPP

@@ -11,32 +11,16 @@ using std::filesystem::path;
 
 int main(int argc, char** argv)
 {
-    // 检查参数
+    // 解析输入
     if (argc != 2)
     {
         spdlog::error("Usage: {} <input_json>", path(argv[0]).filename().string());
         return 1;
     }
-
-    // 读取输入
     std::string input = argv[1];
-    std::ifstream input_file(input);
-    if (!input_file.is_open())
-    {
-        spdlog::error("Failed to open input file \"{}\".", input);
-        return 1;
-    }
-    json input_json = json::parse(input_file);
-    input_file.close();
-
-    // 校验输入
-    validate_schema(input_json);
-    Input input_obj = input_json;
-    validate_logic(input_obj);
-    spdlog::info("Successfully validated input \"{}\".", input);
 
     // 算法处理
-    Output output_data = Algorithm(input_obj).run();
+    Output output_data = Algorithm(parse_input(input)).run();
 
     // 输出结果
     path output = path("result") / ("result-" + path(input).filename().string());

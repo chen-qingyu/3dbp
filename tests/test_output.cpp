@@ -6,6 +6,7 @@
 #include <nlohmann/json-schema.hpp>
 
 #include "../sources/algorithm.hpp"
+#include "../sources/tool.hpp"
 
 TEST_CASE("Output")
 {
@@ -14,19 +15,18 @@ TEST_CASE("Output")
     for (const auto& input_file : std::filesystem::directory_iterator("data/tests"))
     {
         // 运行算法并输出结果
-        spdlog::set_level(spdlog::level::off);
-        json data = json::parse(std::ifstream(input_file.path()));
-        Output output = Algorithm(data).run();
+        Input input = parse_input(input_file.path().string());
+        Output output = Algorithm(input).run();
 
         // 1. 确保输入箱子与输出箱子数量相等
-        int out_box_cnt = std::accumulate(output.containers.begin(), output.containers.end(),
-                                          int(output.unpacked_boxes.size()),
-                                          [](int sum, const Container& container)
-                                          { return sum + int(container.boxes.size()); });
-        REQUIRE(int(data["boxes"].size()) == out_box_cnt);
+        size_t out_box_cnt = std::accumulate(output.containers.begin(), output.containers.end(),
+                                             output.unpacked_boxes.size(),
+                                             [](size_t sum, const Container& container)
+                                             { return sum + container.boxes.size(); });
+        REQUIRE(input.boxes.size() == out_box_cnt);
 
         // 2. 确保输入箱子与输出箱子实体相等
-        std::unordered_set<Box> input_boxes = data["boxes"];
+        std::unordered_set<Box> input_boxes(input.boxes.begin(), input.boxes.end());
         std::unordered_set<Box> output_boxes(output.unpacked_boxes.begin(), output.unpacked_boxes.end());
         for (const auto& container : output.containers)
         {
