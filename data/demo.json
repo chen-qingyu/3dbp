@@ -1,18 +1,20 @@
 {
-  "containers": [
+  "container_types": [
     {
-      "id": "c1",
+      "id": "ct1",
       "lx": 200,
       "ly": 100,
       "lz": 100,
-      "payload": 2000
+      "payload": 2000,
+      "quantity": 1
     },
     {
-      "id": "c2",
+      "id": "ct2",
       "lx": 150,
       "ly": 80,
       "lz": 80,
-      "payload": 1000
+      "payload": 1000,
+      "quantity": 1
     }
   ],
   "box_types": [

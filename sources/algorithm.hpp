@@ -14,12 +14,12 @@
 class Algorithm
 {
 private:
-    std::vector<Container> containers_; // 可用容器
-    Container container_;               // 当前容器
-    std::vector<Box> unpacked_boxes_;   // 待装载箱子
-    std::vector<Box> packed_boxes_;     // 已装载箱子
-    Constraint constraint_;             // 约束检查
-    Output output_;                     // 装箱结果
+    std::vector<ContainerType> container_types_; // 容器类型列表
+    Container container_;                        // 当前容器
+    std::vector<Box> unpacked_boxes_;            // 待装载箱子
+    std::vector<Box> packed_boxes_;              // 已装载箱子
+    Constraint constraint_;                      // 约束检查
+    Output output_;                              // 装箱结果
 
     /// 尝试装载箱子
     /// @param box 待装载的箱子（会被修改位置和方向）
@@ -73,14 +73,14 @@ private:
         {
             used_volume += box.volume();
         }
-        return static_cast<double>(used_volume) / container_.volume();
+        return static_cast<double>(used_volume) / container_.type.volume();
     }
 
     /// 计算重量利用率
     /// @return 重量利用率（0-1之间）
     double calculate_weight_rate() const
     {
-        if (std::isnan(container_.payload))
+        if (std::isnan(container_.type.payload))
         {
             return NAN; // 容器未设置载重
         }
@@ -90,12 +90,12 @@ private:
         {
             used_weight += box.weight;
         }
-        return used_weight / container_.payload;
+        return used_weight / container_.type.payload;
     }
 
-    /// 选择合适的容器（目的是体积利用率尽可能高）
-    /// @return 选择的容器
-    Container select_container() const
+    /// 生成可用容器
+    /// @return 是否成功生成容器
+    bool generate_container()
     {
         // 计算剩余箱子总体积
         long long unpacked_volume = 0;
@@ -103,25 +103,40 @@ private:
         {
             unpacked_volume += box.volume();
         }
-        // 寻找合适的容器
-        for (const auto& container : containers_)
+
+        // 按体积从小到大查找合适的容器类型
+        for (auto& type : container_types_)
         {
-            if (container.volume() >= unpacked_volume)
+            if (type.quantity > 0 && type.volume() >= unpacked_volume)
             {
-                return container;
+                type.quantity--;
+                container_.type = type;
+                return true;
             }
         }
-        return containers_.back(); // 如果没有合适的容器，使用最大的一个
+
+        // 否则使用最大的可用容器类型
+        for (auto it = container_types_.rbegin(); it != container_types_.rend(); ++it)
+        {
+            if (it->quantity > 0)
+            {
+                it->quantity--;
+                container_.type = *it;
+                return true;
+            }
+        }
+
+        return false; // 所有容器都用完了
     }
 
 public:
     /// 构造函数
     /// @param input 输入数据
     Algorithm(const Input& input)
-        : containers_(input.containers)
+        : container_types_(input.container_types)
+        , container_()
         , unpacked_boxes_(input.boxes)
         , packed_boxes_()
-        , container_()
         , constraint_(container_, packed_boxes_)
         , output_()
     {
@@ -132,8 +147,8 @@ public:
         std::ranges::sort(unpacked_boxes_, [](const auto& a, const auto& b)
                           { return a.volume() > b.volume(); });
 
-        // 容器按体积从小到大排序
-        std::ranges::sort(containers_, [](const auto& a, const auto& b)
+        // 容器类型按体积从小到大排序
+        std::ranges::sort(container_types_, [](const auto& a, const auto& b)
                           { return a.volume() < b.volume(); });
     }
 
@@ -141,11 +156,17 @@ public:
     /// @return 装箱结果
     Output run()
     {
+        int container_count = 0;
+
         // 逐个容器装箱，直到容器用完或箱子装完
-        while (!containers_.empty() && !unpacked_boxes_.empty())
+        while (!unpacked_boxes_.empty())
         {
-            // 选择合适的容器
-            container_ = select_container();
+            // 生成下一个可用容器
+            if (!generate_container())
+            {
+                break; // 没有可用容器了
+            }
+
             // 清空已装载的箱子
             packed_boxes_.clear();
 
@@ -158,13 +179,18 @@ public:
                 }
             }
 
-            spdlog::info("Packed {} boxes in container \"{}\".", packed_boxes_.size(), container_.id);
+            // 如果一个箱子都装不下，说明剩余箱子无法装载，退出循环
+            if (packed_boxes_.empty())
+            {
+                spdlog::warn("Remaining boxes cannot be packed.");
+                break;
+            }
+
+            spdlog::info("Packed {} boxes in container#{}: \"{}\".", packed_boxes_.size(), ++container_count, container_.type.id);
 
             // 更新剩余箱子列表
             std::erase_if(unpacked_boxes_, [&](const Box& box)
                           { return std::ranges::find(packed_boxes_, box) != packed_boxes_.end(); });
-            // 更新可用容器列表
-            containers_.erase(std::find(containers_.begin(), containers_.end(), container_));
 
             // 创建装箱方案
             container_.boxes = packed_boxes_;
@@ -179,8 +205,11 @@ public:
             box.y = -1;
             box.z = -1;
         }
+        if (!unpacked_boxes_.empty())
+        {
+            spdlog::warn("Unpacked {} boxes.", unpacked_boxes_.size());
+        }
         output_.unpacked_boxes = unpacked_boxes_;
-        spdlog::info("Unpacked {} boxes.", output_.unpacked_boxes.size());
 
         return output_;
     }

@@ -54,10 +54,10 @@ def main(data: dict):
 def draw(container: dict, ax, max_dims: tuple[int, int, int], box_types: dict):
     """绘制容器和箱子"""
     # 绘制容器
-    cl, cw, ch = container["lx"], container["ly"], container["lz"]
+    cl, cw, ch = container["type"]["lx"], container["type"]["ly"], container["type"]["lz"]
     container_faces = get_cuboid_faces(0, 0, 0, cl, cw, ch)
     ax.add_collection3d(Poly3DCollection(container_faces, edgecolors="black", alpha=0.1))
-    ax.set_title(f"Container {container['id']}")
+    ax.set_title(f"Container Type {container['type']['id']}")
 
     # 绘制箱子
     for box in container["boxes"]:
@@ -118,9 +118,9 @@ def calc_max_dims(containers: list[dict]) -> tuple[int, int, int]:
     """计算所有容器在长宽高三个维度的最大尺寸"""
     max_l, max_w, max_h = 0, 0, 0
     for container in containers:
-        max_l = max(max_l, container["lx"])
-        max_w = max(max_w, container["ly"])
-        max_h = max(max_h, container["lz"])
+        max_l = max(max_l, container["type"]["lx"])
+        max_w = max(max_w, container["type"]["ly"])
+        max_h = max(max_h, container["type"]["lz"])
     return (max_l, max_w, max_h)
 
 

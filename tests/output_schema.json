@@ -20,22 +20,18 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "lx",
-          "ly",
-          "lz",
-          "payload",
-          "boxes",
-          "volume_rate",
-          "weight_rate"
-        ],
+        "required": ["type", "boxes", "volume_rate", "weight_rate"],
         "properties": {
-          "id": { "type": "string" },
-          "lx": { "type": "integer", "minimum": 1 },
-          "ly": { "type": "integer", "minimum": 1 },
-          "lz": { "type": "integer", "minimum": 1 },
-          "payload": { "type": ["number", "null"], "minimum": 0 },
+          "type": {
+            "type": "object",
+            "required": ["id", "lx", "ly", "lz"],
+            "properties": {
+              "id": { "type": "string" },
+              "lx": { "type": "integer", "minimum": 1 },
+              "ly": { "type": "integer", "minimum": 1 },
+              "lz": { "type": "integer", "minimum": 1 }
+            }
+          },
           "boxes": {
             "type": "array",
             "items": {

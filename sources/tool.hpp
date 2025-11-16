@@ -32,13 +32,13 @@ void validate_schema(const nlohmann::json& input)
 /// @param input 输入Input对象
 void validate_logic(const Input& input)
 {
-    // 规则1：容器id全局唯一
-    std::unordered_set<std::string> container_ids;
-    for (const auto& c : input.containers)
+    // 规则1：容器类型id全局唯一
+    std::unordered_set<std::string> container_type_ids;
+    for (const auto& ct : input.container_types)
     {
-        if (!container_ids.insert(c.id).second)
+        if (!container_type_ids.insert(ct.id).second)
         {
-            spdlog::error("Duplicate container id: {}.", c.id);
+            spdlog::error("Duplicate container type id: {}.", ct.id);
             exit(1);
         }
     }

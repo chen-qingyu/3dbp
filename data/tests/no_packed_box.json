@@ -1,11 +1,12 @@
 {
-  "containers": [
+  "container_types": [
     {
-      "id": "c1",
+      "id": "ct1",
       "lx": 10,
       "ly": 10,
       "lz": 10,
-      "payload": 10
+      "payload": 10,
+      "quantity": 1
     }
   ],
   "box_types": [

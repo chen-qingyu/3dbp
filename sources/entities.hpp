@@ -165,47 +165,53 @@ struct Box
     }
 };
 
-/// Represents a 3D container.
-struct Container
+/// Represents a container type.
+struct ContainerType
 {
     // 必选字段
-    std::string id; // 容器ID
-    int lx, ly, lz; // 容器尺寸
+    std::string id; // 容器类型ID
+    int lx, ly, lz; // 容器类型尺寸
 
     // 可选字段
-    double payload; // 容器载重
-
-    // 输出字段
-    std::vector<Box> boxes; // 装载的箱子
-    double volume_rate;     // 体积利用率
-    double weight_rate;     // 重量利用率
+    double payload; // 容器类型载重
+    int quantity;   // 容器类型数量
 
     long long volume() const
     {
         return static_cast<long long>(lx) * ly * lz;
     }
 
-    bool operator==(const Container& other) const
+    friend void from_json(const json& j, ContainerType& ct)
     {
-        return this->id == other.id;
+        ct.id = j["id"];
+        ct.lx = j["lx"];
+        ct.ly = j["ly"];
+        ct.lz = j["lz"];
+        ct.payload = j.value("payload", NAN);
+        ct.quantity = j.value("quantity", std::numeric_limits<int>::max());
     }
 
-    friend void from_json(const json& j, Container& c)
+    friend void to_json(json& j, const ContainerType& ct)
     {
-        c.id = j["id"];
-        c.lx = j["lx"];
-        c.ly = j["ly"];
-        c.lz = j["lz"];
-        c.payload = j.value("payload", NAN);
+        j["id"] = ct.id;
+        j["lx"] = ct.lx;
+        j["ly"] = ct.ly;
+        j["lz"] = ct.lz;
     }
+};
+
+/// Represents a 3D container with loaded boxes.
+struct Container
+{
+    // 输出字段
+    ContainerType type;     // 容器类型
+    std::vector<Box> boxes; // 装载的箱子
+    double volume_rate;     // 体积利用率
+    double weight_rate;     // 重量利用率
 
     friend void to_json(json& j, const Container& c)
     {
-        j["id"] = c.id;
-        j["lx"] = c.lx;
-        j["ly"] = c.ly;
-        j["lz"] = c.lz;
-        j["payload"] = c.payload;
+        j["type"] = c.type;
         j["boxes"] = c.boxes;
         j["volume_rate"] = c.volume_rate;
         j["weight_rate"] = c.weight_rate;
@@ -217,13 +223,13 @@ struct Input
 {
     // 必选字段
     std::vector<BoxType> box_types;
-    std::vector<Container> containers;
+    std::vector<ContainerType> container_types;
     std::vector<Box> boxes;
 
     friend void from_json(const json& j, Input& i)
     {
         i.box_types = j["box_types"];
-        i.containers = j["containers"];
+        i.container_types = j["container_types"];
         i.boxes = j["boxes"];
 
         // 关联box与box_type
@@ -265,14 +271,6 @@ struct hash<Box>
     }
 };
 
-template <>
-struct hash<Container>
-{
-    std::size_t operator()(const Container& c) const
-    {
-        return std::hash<std::string>()(c.id);
-    }
-};
 } // namespace std
 
 #endif // ENTITIES_HPP

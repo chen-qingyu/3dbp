@@ -24,9 +24,9 @@ public:
     /// @return 是否满足约束
     bool check_bound(const Box& box) const
     {
-        return (box.x + box.lx <= container_.lx &&
-                box.y + box.ly <= container_.ly &&
-                box.z + box.lz <= container_.lz);
+        return (box.x + box.lx <= container_.type.lx &&
+                box.y + box.ly <= container_.type.ly &&
+                box.z + box.lz <= container_.type.lz);
     }
 
     /// 约束2：箱子不能与已装载的箱子重叠
@@ -96,7 +96,7 @@ public:
         {
             total += b.weight;
         }
-        return total <= container_.payload;
+        return total <= container_.type.payload;
     }
 
     /// 检查是否满足所有约束
@@ -107,7 +107,7 @@ public:
         return check_bound(box) &&
                check_overlap(box) &&
                check_support(box) &&
-               (std::isnan(container_.payload) || check_weight(box));
+               (std::isnan(container_.type.payload) || check_weight(box));
     }
 };
 

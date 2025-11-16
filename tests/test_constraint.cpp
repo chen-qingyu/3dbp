@@ -4,7 +4,7 @@
 
 TEST_CASE("Constraint")
 {
-    Container container{"container", 10, 10, 10, 100.0};
+    Container container(ContainerType{"ct1", 10, 10, 10, 100.0, 1});
     auto type = std::make_shared<BoxType>("t1", 5, 5, 5);
     std::vector<Box> boxes = {{"origin", type, 10.0, "", 0, 0, 0}};
     Box box_x{"bx", type, 10.0, "", 5, 0, 0};

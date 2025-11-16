@@ -36,15 +36,16 @@ _Pack All~_
 
 输入文件为 JSON 格式，包含以下字段：
 
-#### Container (容器)
+#### ContainerType (容器类型)
 
-| 字段名    | 类型    | 描述                   |
-| --------- | ------- | ---------------------- |
-| `id`      | string  | 容器的唯一标识符       |
-| `lx`      | integer | 容器的长度             |
-| `ly`      | integer | 容器的宽度             |
-| `lz`      | integer | 容器的高度             |
-| `payload` | number  | 容器的最大载重（可选） |
+| 字段名     | 类型    | 描述                                   |
+| ---------- | ------- | -------------------------------------- |
+| `id`       | string  | 容器类型的唯一标识符                   |
+| `lx`       | integer | 容器类型的长度                         |
+| `ly`       | integer | 容器类型的宽度                         |
+| `lz`       | integer | 容器类型的高度                         |
+| `payload`  | number  | 容器类型的最大载重（可选）             |
+| `quantity` | integer | 容器类型的可用数量（可选，默认无限制） |
 
 #### BoxType（箱型）
 
@@ -82,11 +83,11 @@ _Pack All~_
 
 #### Input (输入数据)
 
-| 字段名       | 类型  | 描述             |
-| ------------ | ----- | ---------------- |
-| `containers` | array | 可用的容器列表   |
-| `box_types`  | array | 可用的箱型列表   |
-| `boxes`      | array | 待装载的箱子列表 |
+| 字段名            | 类型  | 描述               |
+| ----------------- | ----- | ------------------ |
+| `container_types` | array | 可用的容器类型列表 |
+| `box_types`       | array | 可用的箱型列表     |
+| `boxes`           | array | 待装载的箱子列表   |
 
 示例输入请参考 [demo.json](data/demo.json)
 
@@ -96,23 +97,19 @@ _Pack All~_
 
 #### Container (容器)
 
-| 字段名        | 类型    | 描述             |
-| ------------- | ------- | ---------------- |
-| `id`          | string  | 容器的唯一标识符 |
-| `lx`          | integer | 容器的长度       |
-| `ly`          | integer | 容器的宽度       |
-| `lz`          | integer | 容器的高度       |
-| `payload`     | number  | 容器的最大载重   |
-| `boxes`       | array   | 已装载的箱子列表 |
-| `volume_rate` | number  | 容器的体积利用率 |
-| `weight_rate` | number  | 容器的载重利用率 |
+| 字段名        | 类型   | 描述             |
+| ------------- | ------ | ---------------- |
+| `type`        | object | 容器的类型       |
+| `boxes`       | array  | 已装载的箱子列表 |
+| `volume_rate` | number | 容器的体积利用率 |
+| `weight_rate` | number | 容器的载重利用率 |
 
-#### Box (箱子)
+##### Box (箱子)
 
 | 字段名   | 类型    | 描述             |
 | -------- | ------- | ---------------- |
 | `id`     | string  | 箱子的唯一标识符 |
-| `type`   | string  | 箱子的类型       |
+| `type`   | string  | 箱型的唯一标识符 |
 | `weight` | number  | 箱子的重量       |
 | `group`  | string  | 箱子的分组       |
 | `x`      | integer | 装载的 X 轴坐标  |
@@ -138,27 +135,22 @@ output
 │   └── ...
 ├── containers
 │   ├── container#1
-│   │   ├── id
-│   │   ├── lx
-│   │   ├── ly
-│   │   ├── lz
+│   │   ├── type
 │   │   └── boxes
 │   │   │   ├── box#1
 │   │   │   ├── box#2
 │   │   │   └── ...
 │   │   ├── volume_rate
 │   │   └── weight_rate
-│   └── container#2
-│       ├── id
-│       ├── lx
-│       ├── ly
-│       ├── lz
-│       └── boxes
-│       │   ├── box#3
-│       │   ├── box#4
-│       │   └── ...
-│       ├── volume_rate
-│       └── weight_rate
+│   ├── container#2
+│   │   ├── type
+│   │   └── boxes
+│   │   │   ├── box#3
+│   │   │   ├── box#4
+│   │   │   └── ...
+│   │   ├── volume_rate
+│   │   └── weight_rate
+│   └── ...
 └── unpacked_boxes
     ├── box#5
     ├── box#6

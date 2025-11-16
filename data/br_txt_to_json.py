@@ -23,12 +23,13 @@ def parse_br_file(file):
         num_box_types = int(lines[current_line])
         current_line += 1
 
-        # 创建容器
-        container = {
+        # 创建容器类型
+        container_type = {
             "id": f"{os.path.basename(file).split('.')[0]}#{problem_num}",
             "lx": lx,
             "ly": ly,
             "lz": lz,
+            "quantity": 1,
         }
 
         # 创建箱子类型
@@ -76,7 +77,7 @@ def parse_br_file(file):
 
         # 创建单个问题的结果
         result = {
-            "containers": [container],
+            "container_types": [container_type],
             "box_types": box_types,
             "boxes": boxes,
         }
