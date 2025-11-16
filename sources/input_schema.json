@@ -13,7 +13,7 @@
           "lx": { "type": "integer", "minimum": 1 },
           "ly": { "type": "integer", "minimum": 1 },
           "lz": { "type": "integer", "minimum": 1 },
-          "payload": { "type": "number", "minimum": 0 },
+          "payload": { "type": "number", "exclusiveMinimum": 0.0 },
           "quantity": { "type": "integer", "minimum": 1 }
         }
       }
@@ -46,7 +46,7 @@
         "properties": {
           "id": { "type": "string" },
           "type": { "type": "string" },
-          "weight": { "type": "number", "minimum": 0 },
+          "weight": { "type": "number", "exclusiveMinimum": 0.0 },
           "group": { "type": "string" }
         }
       }

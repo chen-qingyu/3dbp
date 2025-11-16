@@ -151,7 +151,6 @@ struct Box
     {
         j["id"] = b.id;
         j["type"] = b.type_id;
-        j["weight"] = b.weight;
         j["group"] = b.group;
 
         // 如果箱子成功装载了才输出位置信息

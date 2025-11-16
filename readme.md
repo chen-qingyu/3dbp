@@ -110,7 +110,6 @@ _Pack All~_
 | -------- | ------- | ---------------- |
 | `id`     | string  | 箱子的唯一标识符 |
 | `type`   | string  | 箱型的唯一标识符 |
-| `weight` | number  | 箱子的重量       |
 | `group`  | string  | 箱子的分组       |
 | `x`      | integer | 装载的 X 轴坐标  |
 | `y`      | integer | 装载的 Y 轴坐标  |
