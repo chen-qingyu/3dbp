@@ -4,9 +4,7 @@
       "id": "ct1",
       "lx": 10,
       "ly": 10,
-      "lz": 10,
-      "payload": 10,
-      "quantity": 1
+      "lz": 10
     }
   ],
   "box_types": [
@@ -20,13 +18,11 @@
   "boxes": [
     {
       "id": "b1",
-      "type": "t1",
-      "weight": 50
+      "type": "t1"
     },
     {
       "id": "b2",
-      "type": "t1",
-      "weight": 50
+      "type": "t1"
     }
   ]
 }
