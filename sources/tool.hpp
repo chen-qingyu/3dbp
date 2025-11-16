@@ -1,6 +1,7 @@
 #ifndef TOOL_HPP
 #define TOOL_HPP
 
+#include <algorithm>
 #include <fstream>
 #include <unordered_set>
 
@@ -52,6 +53,53 @@ static void validate_logic(const Input& input)
             spdlog::error("Duplicate box id: {}.", b.id);
             exit(1);
         }
+    }
+
+    // 规则3：箱型id全局唯一
+    std::unordered_set<std::string> box_type_ids;
+    for (const auto& bt : input.box_types)
+    {
+        if (!box_type_ids.insert(bt.id).second)
+        {
+            spdlog::error("Duplicate box type id: {}.", bt.id);
+            exit(1);
+        }
+    }
+
+    // 规则4：箱子引用的箱型必须存在
+    for (const auto& b : input.boxes)
+    {
+        if (box_type_ids.find(b.type_id) == box_type_ids.end())
+        {
+            spdlog::error("Box \"{}\" references non-existent box type \"{}\".", b.id, b.type_id);
+            exit(1);
+        }
+    }
+
+    // 规则5：当容器有载重限制时，箱子必须有重量信息
+    if (std::any_of(input.container_types.begin(), input.container_types.end(), [](const auto& ct)
+                    { return !std::isnan(ct.payload); }))
+    {
+        for (const auto& b : input.boxes)
+        {
+            if (std::isnan(b.weight))
+            {
+                spdlog::error("Box \"{}\" has no weight info but container has payload limit.", b.id);
+                exit(1);
+            }
+        }
+    }
+
+    // 规则6：至少要有一个容器类型和一个箱子
+    if (input.container_types.empty())
+    {
+        spdlog::error("No container types provided.");
+        exit(1);
+    }
+    if (input.boxes.empty())
+    {
+        spdlog::error("No boxes provided.");
+        exit(1);
     }
 }
 
