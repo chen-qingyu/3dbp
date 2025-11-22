@@ -62,8 +62,7 @@ struct Box
     std::string type_id; // 箱型ID
 
     // 可选字段
-    double weight;     // 箱子重量
-    std::string group; // 箱子分组
+    double weight; // 箱子重量
 
     // 输出字段
     int x, y, z;   // 箱子位置
@@ -75,11 +74,10 @@ struct Box
 
     Box() = default;
 
-    Box(std::string id, std::shared_ptr<BoxType> type, double weight, std::string group, int x, int y, int z)
+    Box(std::string id, std::shared_ptr<BoxType> type, double weight, int x, int y, int z)
         : id(std::move(id))
         , type_id(type->id)
         , weight(weight)
-        , group(std::move(group))
         , x(x)
         , y(y)
         , z(z)
@@ -144,14 +142,12 @@ struct Box
         b.id = j["id"];
         b.type_id = j["type"];
         b.weight = j.value("weight", NAN);
-        b.group = j.value("group", "");
     }
 
     friend void to_json(json& j, const Box& b)
     {
         j["id"] = b.id;
         j["type"] = b.type_id;
-        j["group"] = b.group;
 
         // 如果箱子成功装载了才输出位置信息
         if (b.x != -1 && b.y != -1 && b.z != -1)

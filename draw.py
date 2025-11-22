@@ -49,14 +49,14 @@ def main(data: dict):
     fig.show()
 
 
-def draw(container: dict, fig: go.Figure, row: int, col: int, max_dims: tuple[int, int, int], box_types: dict, shown_legends=set()):
+def draw(container: dict, fig: go.Figure, row: int, col: int, max_dims: tuple[int, int, int], box_types: dict, shown_types=set()):
     """绘制容器和箱子"""
     # 绘制容器
     draw_container(fig, container, row, col)
 
     # 绘制箱子
     for box in container["boxes"]:
-        draw_box(fig, box, row, col, shown_legends, box_types)
+        draw_box(fig, box, row, col, shown_types, box_types)
 
     # 设置场景
     max_dim = max(max_dims)
@@ -87,13 +87,12 @@ def draw_container(fig: go.Figure, container: dict, row: int, col: int):
     draw_edges(fig, vertices, line, row, col)
 
 
-def draw_box(fig: go.Figure, box: dict, row: int, col: int, shown_legends: set, box_types: dict):
+def draw_box(fig: go.Figure, box: dict, row: int, col: int, shown_types: set, box_types: dict):
     """绘制箱子"""
     x, y, z = box["x"], box["y"], box["z"]
     box_type = box_types[box["type"]]
     l, w, h = get_oriented_dim(box_type["lx"], box_type["ly"], box_type["lz"], box["orient"])
-    group = box["group"]
-    color = get_color(group)
+    color = get_color(box["type"])
 
     # 定义长方体的8个顶点
     vertices = np.array([
@@ -126,15 +125,15 @@ def draw_box(fig: go.Figure, box: dict, row: int, col: int, shown_legends: set, 
             j=[face[1] for face in faces],
             k=[face[2] for face in faces],
             color=color,
-            name=group,
-            legendgroup=group,
-            showlegend=group not in shown_legends,
+            name=box["type"],
+            legendgroup=box["type"],
+            showlegend=box["type"] not in shown_types,
             text=get_text(box, box_type),
             hoverinfo='text',
         ),
         row=row, col=col
     )
-    shown_legends.add(group)
+    shown_types.add(box["type"])
 
     line = dict(color='black', width=1)
     draw_edges(fig, vertices, line, row, col)
@@ -169,7 +168,6 @@ def get_text(box: dict, box_type: dict) -> str:
     text += f"size: ({box_type["lx"]}x{box_type["ly"]}x{box_type["lz"]})<br>"
     text += f"pos: ({box["x"]}, {box["y"]}, {box["z"]})<br>"
     text += f"orient: {box["orient"]}<br>"
-    text += f"group: {box["group"]}<br>"
     return text
 
 
@@ -186,12 +184,12 @@ def get_oriented_dim(l: int, w: int, h: int, orient: int) -> tuple[int, int, int
     return orient_map[orient]
 
 
-def get_color(group: str, colors={}):
-    """一个平台一种颜色"""
-    if group not in colors:
+def get_color(type_id: str, colors={}):
+    """一种箱型一个颜色"""
+    if type_id not in colors:
         base = plotly.express.colors.qualitative.Plotly
-        colors[group] = base[len(colors) % len(base)]
-    return colors[group]
+        colors[type_id] = base[len(colors) % len(base)]
+    return colors[type_id]
 
 
 def calc_max_dims(containers: list[dict]) -> tuple[int, int, int]:

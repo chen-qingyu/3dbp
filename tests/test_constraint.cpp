@@ -6,16 +6,16 @@ TEST_CASE("Constraint")
 {
     Container container(ContainerType{"ct1", 10, 10, 10, 100.0, 1});
     auto type = std::make_shared<BoxType>("t1", 5, 5, 5);
-    std::vector<Box> boxes = {{"origin", type, 10.0, "", 0, 0, 0}};
-    Box box_x{"bx", type, 10.0, "", 5, 0, 0};
-    Box box_y{"by", type, 10.0, "", 0, 5, 0};
-    Box box_z{"bz", type, 10.0, "", 0, 0, 5};
+    std::vector<Box> boxes = {{"origin", type, 10.0, 0, 0, 0}};
+    Box box_x{"bx", type, 10.0, 5, 0, 0};
+    Box box_y{"by", type, 10.0, 0, 5, 0};
+    Box box_z{"bz", type, 10.0, 0, 0, 5};
 
     SECTION("check_bound")
     {
         Constraint constraint(container, boxes);
 
-        Box box_bad{"bad", type, 10.0, "", 0, 0, 6}; // Exceeds container height
+        Box box_bad{"bad", type, 10.0, 0, 0, 6}; // Exceeds container height
         REQUIRE(constraint.check_bound(box_x));
         REQUIRE(constraint.check_bound(box_y));
         REQUIRE(constraint.check_bound(box_z));
@@ -26,7 +26,7 @@ TEST_CASE("Constraint")
     {
         Constraint constraint(container, boxes);
 
-        Box box_bad{"bad", type, 10.0, "", 0, 0, 4}; // Overlaps with origin box
+        Box box_bad{"bad", type, 10.0, 0, 0, 4}; // Overlaps with origin box
         REQUIRE(constraint.check_overlap(box_x));
         REQUIRE(constraint.check_overlap(box_y));
         REQUIRE(constraint.check_overlap(box_z));
@@ -37,7 +37,7 @@ TEST_CASE("Constraint")
     {
         Constraint constraint(container, boxes);
 
-        Box box_bad{"bad", type, 10.0, "", 5, 0, 1}; // Not properly supported
+        Box box_bad{"bad", type, 10.0, 5, 0, 1}; // Not properly supported
         REQUIRE(constraint.check_support(box_x));
         REQUIRE(constraint.check_support(box_y));
         REQUIRE(constraint.check_support(box_z));
@@ -48,7 +48,7 @@ TEST_CASE("Constraint")
     {
         Constraint constraint(container, boxes);
 
-        Box box_bad{"bad", type, 100.0, "", 5, 0, 0}; // Exceeds weight limit
+        Box box_bad{"bad", type, 100.0, 5, 0, 0}; // Exceeds weight limit
         REQUIRE(constraint.check_weight(box_x));
         REQUIRE(constraint.check_weight(box_y));
         REQUIRE(constraint.check_weight(box_z));

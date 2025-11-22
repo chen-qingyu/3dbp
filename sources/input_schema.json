@@ -46,8 +46,7 @@
         "properties": {
           "id": { "type": "string" },
           "type": { "type": "string" },
-          "weight": { "type": "number", "exclusiveMinimum": 0.0 },
-          "group": { "type": "string" }
+          "weight": { "type": "number", "exclusiveMinimum": 0.0 }
         }
       }
     }
