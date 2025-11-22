@@ -1,21 +1,16 @@
 """
-绘制 3D 装箱图。
+绘制 3D 可交互装箱图。
 Usage:
     py draw.py <result_json>
 """
 
 import sys
 import json
-from dataclasses import dataclass
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from matplotlib.widgets import Button
-from matplotlib.colors import TABLEAU_COLORS
-from matplotlib.patches import Patch
-
-# 设置中文字体支持
-plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']
+import numpy as np
+import plotly.graph_objects as go
+import plotly.subplots
+import plotly.express.colors
 
 
 def main(data: dict):
@@ -29,53 +24,153 @@ def main(data: dict):
     cols = min(4, n)  # 最多4列
     rows = (n + cols - 1) // cols
 
-    # 创建图形和子图
-    fig = plt.figure(figsize=(6 * cols, 5 * rows))
-    plot_axes = []
+    # 创建子图
+    subplot_titles = [
+        f"Container {c['type']['id']}<br>"
+        f"<sub>Volume Rate: {c['volume_rate']:.2%}, Weight Rate: {c['weight_rate'] if c['weight_rate'] else 0:.2%}</sub>"
+        for c in containers
+    ]
+    fig = plotly.subplots.make_subplots(
+        rows=rows, cols=cols,
+        specs=[[{"type": "scatter3d"} for _ in range(cols)] for _ in range(rows)],
+        subplot_titles=subplot_titles,
+    )
 
     # 绘制每个装箱方案
     for i, container in enumerate(containers):
-        ax = fig.add_subplot(rows, cols, i + 1, projection="3d")
-        draw(container, ax, max_dims, box_types)
-        plot_axes.append(ax)
+        row = i // cols + 1
+        col = i % cols + 1
+        draw(container, fig, row, col, max_dims, box_types)
 
-    # 创建视图切换按钮
-    view_button = ViewButton(fig)
-    view_button.plot_axes = plot_axes
+    # 添加视图切换功能
+    add_view_selector(fig, rows, cols)
 
-    # 创建平台颜色图例
-    create_legend(containers, fig)
-
-    # 默认最大化窗口显示
-    plt.get_current_fig_manager().window.showMaximized()  # type: ignore
-    plt.show()
+    # 显示图形
+    fig.show()
 
 
-def draw(container: dict, ax, max_dims: tuple[int, int, int], box_types: dict):
+def draw(container: dict, fig: go.Figure, row: int, col: int, max_dims: tuple[int, int, int], box_types: dict, shown_legends=set()):
     """绘制容器和箱子"""
     # 绘制容器
-    cl, cw, ch = container["type"]["lx"], container["type"]["ly"], container["type"]["lz"]
-    container_faces = get_cuboid_faces(0, 0, 0, cl, cw, ch)
-    ax.add_collection3d(Poly3DCollection(container_faces, edgecolors="black", alpha=0.1))
-    ax.set_title(f"Container Type {container['type']['id']}")
+    draw_container(fig, container, row, col)
 
     # 绘制箱子
     for box in container["boxes"]:
-        box_type = box_types[box["type"]]
-        l, w, h = get_oriented_dim(box_type["lx"], box_type["ly"], box_type["lz"], box["orient"])
-        box_faces = get_cuboid_faces(box["x"], box["y"], box["z"], l, w, h)
-        color = get_color(box)
-        ax.add_collection3d(Poly3DCollection(box_faces, facecolors=color, edgecolors="black", linewidths=0.5, alpha=0.5))
+        draw_box(fig, box, row, col, shown_legends, box_types)
 
-    # 设置轴比例和范围
-    ax.set_box_aspect([max_dims[0], max_dims[1], max_dims[2]])
-    ax.set(xlim=(0, max_dims[0]), ylim=(0, max_dims[1]), zlim=(0, max_dims[2]), xlabel="X", ylabel="Y", zlabel="Z")
+    # 设置场景
+    max_dim = max(max_dims)
+    scene_config = dict(
+        xaxis=dict(range=[0, max_dims[0]], title="X"),
+        yaxis=dict(range=[0, max_dims[1]], title="Y"),
+        zaxis=dict(range=[0, max_dims[2]], title="Z"),
+        aspectratio=dict(
+            x=max_dims[0] / max_dim,
+            y=max_dims[1] / max_dim,
+            z=max_dims[2] / max_dim
+        )
+    )
+    scene = f"scene{(row-1)*4 + col}" if (row-1)*4 + col > 1 else "scene"
+    fig.layout[scene].update(scene_config)
 
-    # 显示容器信息和利用率
-    info = f"Volume Rate: {container['volume_rate']:.2%}"
-    if container['weight_rate'] is not None:
-        info += f", Weight Rate: {container['weight_rate']:.2%}"
-    ax.text2D(0.5, -0.05, info, transform=ax.transAxes, ha="center")
+
+def draw_container(fig: go.Figure, container: dict, row: int, col: int):
+    """绘制容器"""
+    t = container["type"]
+    l, w, h = t["lx"], t["ly"], t["lz"]
+
+    vertices = np.array([
+        [0, 0, 0], [l, 0, 0], [l, w, 0], [0, w, 0],  # 底面4个顶点
+        [0, 0, h], [l, 0, h], [l, w, h], [0, w, h]   # 顶面4个顶点
+    ])
+    line = dict(color='gray', width=2)
+    draw_edges(fig, vertices, line, row, col)
+
+
+def draw_box(fig: go.Figure, box: dict, row: int, col: int, shown_legends: set, box_types: dict):
+    """绘制箱子"""
+    x, y, z = box["x"], box["y"], box["z"]
+    box_type = box_types[box["type"]]
+    l, w, h = get_oriented_dim(box_type["lx"], box_type["ly"], box_type["lz"], box["orient"])
+    group = box["group"]
+    color = get_color(group)
+
+    # 定义长方体的8个顶点
+    vertices = np.array([
+        [x, y, z], [x + l, y, z], [x + l, y + w, z], [x, y + w, z],
+        [x, y, z + h], [x + l, y, z + h], [x + l, y + w, z + h], [x, y + w, z + h],
+    ])
+
+    # 定义6个面的顶点索引（每个面由2个三角形组成）
+    faces = [
+        # 底面 (z=0)
+        [0, 1, 2], [0, 2, 3],
+        # 顶面 (z=h)
+        [4, 5, 6], [4, 6, 7],
+        # 前面 (y=0)
+        [0, 1, 5], [0, 5, 4],
+        # 后面 (y=w)
+        [3, 2, 6], [3, 6, 7],
+        # 左面 (x=0)
+        [0, 3, 7], [0, 7, 4],
+        # 右面 (x=l)
+        [1, 2, 6], [1, 6, 5]
+    ]
+
+    fig.add_trace(
+        go.Mesh3d(
+            x=vertices[:, 0],
+            y=vertices[:, 1],
+            z=vertices[:, 2],
+            i=[face[0] for face in faces],
+            j=[face[1] for face in faces],
+            k=[face[2] for face in faces],
+            color=color,
+            name=group,
+            legendgroup=group,
+            showlegend=group not in shown_legends,
+            text=get_text(box, box_type),
+            hoverinfo='text',
+        ),
+        row=row, col=col
+    )
+    shown_legends.add(group)
+
+    line = dict(color='black', width=1)
+    draw_edges(fig, vertices, line, row, col)
+
+
+def draw_edges(fig: go.Figure, vertices: np.ndarray, line: dict, row: int, col: int):
+    """绘制长方体边框"""
+    edges = [
+        (0, 1), (1, 2), (2, 3), (3, 0),  # 底面
+        (4, 5), (5, 6), (6, 7), (7, 4),  # 顶面
+        (0, 4), (1, 5), (2, 6), (3, 7)   # 竖直边
+    ]
+    for a, b in edges:
+        fig.add_trace(
+            go.Scatter3d(
+                x=[vertices[a, 0], vertices[b, 0]],
+                y=[vertices[a, 1], vertices[b, 1]],
+                z=[vertices[a, 2], vertices[b, 2]],
+                mode='lines',
+                line=line,
+                showlegend=False,
+                hoverinfo='skip',
+            ),
+            row=row, col=col
+        )
+
+
+def get_text(box: dict, box_type: dict) -> str:
+    """生成用于鼠标悬浮显示的文本信息"""
+    text = f"box: {box["id"]}<br>"
+    text += f"type: {box["type"]}<br>"
+    text += f"size: ({box_type["lx"]}x{box_type["ly"]}x{box_type["lz"]})<br>"
+    text += f"pos: ({box["x"]}, {box["y"]}, {box["z"]})<br>"
+    text += f"orient: {box["orient"]}<br>"
+    text += f"group: {box["group"]}<br>"
+    return text
 
 
 def get_oriented_dim(l: int, w: int, h: int, orient: int) -> tuple[int, int, int]:
@@ -91,25 +186,10 @@ def get_oriented_dim(l: int, w: int, h: int, orient: int) -> tuple[int, int, int
     return orient_map[orient]
 
 
-def get_cuboid_faces(x: int, y: int, z: int, l: int, w: int, h: int) -> list[list[list[int]]]:
-    """将长方体转为 6 个面片"""
-    pts = [[x, y, z], [x + l, y, z], [x + l, y + w, z], [x, y + w, z],
-           [x, y, z + h], [x + l, y, z + h], [x + l, y + w, z + h], [x, y + w, z + h]]
-    return [
-        [pts[0], pts[1], pts[2], pts[3]],  # bottom
-        [pts[4], pts[5], pts[6], pts[7]],  # top
-        [pts[0], pts[1], pts[5], pts[4]],  # front
-        [pts[2], pts[3], pts[7], pts[6]],  # back
-        [pts[1], pts[2], pts[6], pts[5]],  # right
-        [pts[0], pts[3], pts[7], pts[4]],  # left
-    ]
-
-
-def get_color(box: dict, colors={}):
-    """颜色映射"""
-    base = list(TABLEAU_COLORS.values())
-    group = box["group"]
+def get_color(group: str, colors={}):
+    """一个平台一种颜色"""
     if group not in colors:
+        base = plotly.express.colors.qualitative.Plotly
         colors[group] = base[len(colors) % len(base)]
     return colors[group]
 
@@ -124,66 +204,45 @@ def calc_max_dims(containers: list[dict]) -> tuple[int, int, int]:
     return (max_l, max_w, max_h)
 
 
-def create_legend(containers: list[dict], fig):
-    """创建平台颜色图例"""
-    # 收集平台信息
-    groups = set()
-    for container in containers:
-        for box in container["boxes"]:
-            groups.add(box["group"])
+def add_view_selector(fig: go.Figure, rows: int, cols: int):
+    """添加视图选择器"""
 
-    # 创建图例元素
-    legends = []
-    for group in sorted(groups):
-        # 创建一个假的box来获取颜色
-        dummy = {"group": group}
-        color = get_color(dummy)
-        legends.append(Patch(facecolor=color, label=group))
+    # 定义标准视图的相机参数
+    views = {
+        "默认视图": None,  # None表示使用plotly默认相机
+        "前视图": {"eye": {"x": 0, "y": -2, "z": 0}, "up": {"x": 0, "y": 0, "z": 1}},
+        "后视图": {"eye": {"x": 0, "y": 2, "z": 0}, "up": {"x": 0, "y": 0, "z": 1}},
+        "左视图": {"eye": {"x": -2, "y": 0, "z": 0}, "up": {"x": 0, "y": 0, "z": 1}},
+        "右视图": {"eye": {"x": 2, "y": 0, "z": 0}, "up": {"x": 0, "y": 0, "z": 1}},
+        "俯视图": {"eye": {"x": 0, "y": 0, "z": 2}, "up": {"x": 0, "y": 1, "z": 0}},
+        "仰视图": {"eye": {"x": 0, "y": 0, "z": -2}, "up": {"x": 0, "y": -1, "z": 0}},
+    }
 
-    # 添加图例
-    fig.legend(handles=legends, loc='center right', title="Groups")
+    # 更新所有子图的相机
+    scenes = ["scene"] + [f"scene{i}" for i in range(2, rows * cols + 1)]
+    buttons = []
+    for view_name, camera in views.items():
+        buttons.append(
+            dict(
+                label=view_name,
+                method="relayout",
+                args=[{f"{scene}.camera": camera for scene in scenes}],
+            )
+        )
 
-
-@dataclass
-class ViewConfig:
-    """视图配置类"""
-    name: str
-    elev: int
-    azim: int
-
-
-class ViewButton:
-    """视图按钮类，封装按钮创建和交互逻辑"""
-
-    def __init__(self, fig):
-        """初始化视图按钮"""
-        self.fig = fig  # 图形对象
-        self.buttons = []  # 存储视图按钮
-        self.plot_axes = []  # 存储绘图轴，排除按钮轴
-        self.VIEW_CONFIGS = [  # 预定义的视图配置
-            ViewConfig("Front", 0, 0),      # 前视图
-            ViewConfig("Back", 0, 180),     # 后视图
-            ViewConfig("Left", 0, 90),      # 左视图
-            ViewConfig("Right", 0, -90),    # 右视图
-            ViewConfig("Top", 90, 0),       # 顶视图
-            ViewConfig("Bottom", -90, 0),   # 底视图
-            ViewConfig("Default", 30, -60),   # 默认视图
+    # 添加下拉菜单
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                buttons=buttons,
+                direction="down",
+                showactive=True,
+                active=0,
+                xanchor="left",
+                yanchor="top",
+            )
         ]
-
-        button_width = 0.07
-        button_height = 0.035
-
-        for i, config in enumerate(self.VIEW_CONFIGS):
-            x_pos = i * button_width
-            button_ax = self.fig.add_axes((x_pos, 0, button_width, button_height))
-            button = Button(button_ax, config.name)
-            button.on_clicked(lambda event, cfg=config: self._on_button_click(cfg))
-            self.buttons.append(button)
-
-    def _on_button_click(self, config: ViewConfig):
-        for ax in self.plot_axes:
-            ax.view_init(elev=config.elev, azim=config.azim)
-        self.fig.canvas.draw()
+    )
 
 
 if __name__ == "__main__":
