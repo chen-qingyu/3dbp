@@ -13,9 +13,10 @@ target("3dbp")
     add_packages("nlohmann_json", "spdlog", "json-schema-validator")
     add_files("sources/*.cpp")
 
-    after_run(function (target)
-        local args = import("core.base.option").get("arguments")
-        os.execv("py", {"draw.py", "./result/result-" .. path.filename(args[1])})
+    on_load(function (target)
+        local schema = io.readfile("sources/input_schema.json")
+        local content = string.format("static inline constexpr const char* SCHEMA = R\"(%s)\";", schema)
+        io.writefile("sources/input_schema.h", content)
     end)
 
 target("test")

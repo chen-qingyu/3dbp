@@ -2,7 +2,6 @@
 #define TOOL_HPP
 
 #include <algorithm>
-#include <fstream>
 #include <unordered_set>
 
 #include <nlohmann/json-schema.hpp>
@@ -10,6 +9,7 @@
 #include <spdlog/spdlog.h>
 
 #include "entities.hpp"
+#include "input_schema.h"
 
 /// 校验JSON输入数据格式
 /// @param input 输入JSON对象
@@ -17,8 +17,7 @@ static void validate_schema(const nlohmann::json& input)
 {
     try
     {
-        auto file = std::ifstream("sources/input_schema.json");  // 读取文件
-        nlohmann::json schema = nlohmann::json::parse(file);     // 加载Schema
+        nlohmann::json schema = nlohmann::json::parse(SCHEMA);   // 加载Schema
         nlohmann::json_schema::json_validator validator(schema); // 创建校验器
         validator.validate(input);                               // 校验数据
     }
