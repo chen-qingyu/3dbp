@@ -1,10 +1,10 @@
-# 3DBP
+# pack3d
 
 _Pack All~_
 
 ## 1. 属性
 
-- 名称：3DBP (意为 **3D** **B**in **P**acking)
+- 名称：pack3d
 - 目标：提供一个高效的程序帮助用户优化三维装箱的效果
 - 模块：采用模块化设计，输入输出、算法、约束，均可替换
 
@@ -174,7 +174,7 @@ xmake format
 xmake config -m debug
 
 # 运行 demo 并画图
-xmake run 3dbp ./data/demo.json
+xmake run pack3d ./data/demo.json
 
 # 单元测试 & 集成测试
 xmake run test
