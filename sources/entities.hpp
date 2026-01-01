@@ -72,23 +72,6 @@ struct Box
     std::shared_ptr<BoxType> type; // 箱子类型指针
     int lx, ly, lz;                // 箱子在当前方向下的尺寸
 
-    Box() = default;
-
-    Box(std::string id, std::shared_ptr<BoxType> type, double weight, int x, int y, int z)
-        : id(std::move(id))
-        , type_id(type->id)
-        , weight(weight)
-        , x(x)
-        , y(y)
-        , z(z)
-        , orient(Orient::UNDEFINED)
-        , type(std::move(type))
-        , lx(this->type->lx)
-        , ly(this->type->ly)
-        , lz(this->type->lz)
-    {
-    }
-
     long long volume() const
     {
         return static_cast<long long>(type->lx) * type->ly * type->lz;
