@@ -31,8 +31,8 @@
           "orients": {
             "type": "array",
             "items": {
-              "type": "integer",
-              "enum": [0, 1, 2, 3, 4, 5]
+              "type": "string",
+              "enum": ["XYZ", "YXZ", "XZY", "ZXY", "YZX", "ZYX"]
             }
           }
         }

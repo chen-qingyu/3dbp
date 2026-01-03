@@ -1,35 +1,93 @@
-Randomness seeded to: 1584224389
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-bench.exe is a Catch2 v3.8.1 host application.
-Run with -? for options
+running 0 tests
 
--------------------------------------------------------------------------------
-benchmark
--------------------------------------------------------------------------------
-benches\benchmark.cpp(9)
-...............................................................................
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-benchmark name                            samples    iterations          mean
--------------------------------------------------------------------------------
-br00_001.json                                  100             1    1.78781 ms 
-br01_001.json                                  100             1    1.35101 ms 
-br02_001.json                                  100             1    568.541 us 
-br03_001.json                                  100             1    937.448 us 
-br04_001.json                                  100             1    940.488 us 
-br05_001.json                                  100             1    1.10931 ms 
-br06_001.json                                  100             1     2.4149 ms 
-br07_001.json                                  100             1    1.83033 ms 
-br08_001.json                                  100             1    3.16209 ms 
-br09_001.json                                  100             1    5.21252 ms 
-br10_001.json                                  100             1    4.82873 ms 
-br11_001.json                                  100             1    4.06975 ms 
-br12_001.json                                  100             1    4.63147 ms 
-br13_001.json                                  100             1    4.50474 ms 
-br14_001.json                                  100             1    3.60788 ms 
-br15_001.json                                  100             1     3.8069 ms 
 
-===============================================================================
-test cases: 1 | 1 passed
-assertions: - none -
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+br00_001.json           time:   [889.73 µs 891.51 µs 893.34 µs]
+Found 8 outliers among 100 measurements (8.00%)
+  2 (2.00%) high mild
+  6 (6.00%) high severe
+
+br01_001.json           time:   [664.97 µs 666.68 µs 668.62 µs]
+Found 10 outliers among 100 measurements (10.00%)
+  6 (6.00%) high mild
+  4 (4.00%) high severe
+
+br02_001.json           time:   [337.33 µs 339.23 µs 341.20 µs]
+Found 5 outliers among 100 measurements (5.00%)
+  3 (3.00%) high mild
+  2 (2.00%) high severe
+
+br03_001.json           time:   [504.31 µs 506.60 µs 509.03 µs]
+Found 5 outliers among 100 measurements (5.00%)
+  1 (1.00%) high mild
+  4 (4.00%) high severe
+
+br04_001.json           time:   [525.21 µs 526.69 µs 528.27 µs]
+Found 6 outliers among 100 measurements (6.00%)
+  4 (4.00%) high mild
+  2 (2.00%) high severe
+
+br05_001.json           time:   [595.48 µs 596.57 µs 597.68 µs]
+Found 6 outliers among 100 measurements (6.00%)
+  1 (1.00%) high mild
+  5 (5.00%) high severe
+
+br06_001.json           time:   [1.0931 ms 1.0952 ms 1.0973 ms]
+Found 8 outliers among 100 measurements (8.00%)
+  4 (4.00%) high mild
+  4 (4.00%) high severe
+
+br07_001.json           time:   [854.99 µs 856.31 µs 857.74 µs]
+Found 7 outliers among 100 measurements (7.00%)
+  4 (4.00%) high mild
+  3 (3.00%) high severe
+
+br08_001.json           time:   [1.3151 ms 1.3173 ms 1.3196 ms]
+Found 7 outliers among 100 measurements (7.00%)
+  4 (4.00%) high mild
+  3 (3.00%) high severe
+
+br09_001.json           time:   [1.6592 ms 1.6631 ms 1.6692 ms]
+Found 5 outliers among 100 measurements (5.00%)
+  5 (5.00%) high severe
+
+br10_001.json           time:   [1.6440 ms 1.6464 ms 1.6487 ms]
+Found 9 outliers among 100 measurements (9.00%)
+  3 (3.00%) high mild
+  6 (6.00%) high severe
+
+br11_001.json           time:   [1.4257 ms 1.4324 ms 1.4445 ms]
+Found 5 outliers among 100 measurements (5.00%)
+  5 (5.00%) high severe
+
+br12_001.json           time:   [1.6028 ms 1.6050 ms 1.6072 ms]
+Found 6 outliers among 100 measurements (6.00%)
+  1 (1.00%) high mild
+  5 (5.00%) high severe
+
+br13_001.json           time:   [1.5000 ms 1.5037 ms 1.5078 ms]
+Found 11 outliers among 100 measurements (11.00%)
+  5 (5.00%) high mild
+  6 (6.00%) high severe
+
+br14_001.json           time:   [1.2566 ms 1.2598 ms 1.2638 ms]
+Found 9 outliers among 100 measurements (9.00%)
+  3 (3.00%) high mild
+  6 (6.00%) high severe
+
+br15_001.json           time:   [1.2959 ms 1.2983 ms 1.3009 ms]
+Found 9 outliers among 100 measurements (9.00%)
+  5 (5.00%) high mild
+  4 (4.00%) high severe
 

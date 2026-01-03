@@ -59,18 +59,18 @@ _Pack All~_
 
 ##### Orients (允许的放置方向)
 
-箱型的放置方向使用整数表示，共有六种可能的放置方向：
+箱型的放置方向使用字符串表示，共有六种可能的放置方向：
 
-- `0`：长度 (lx) 沿 X 轴，宽度 (ly) 沿 Y 轴，高度 (lz) 沿 Z 轴（高度垂直）
-- `1`：宽度 (ly) 沿 X 轴，长度 (lx) 沿 Y 轴，高度 (lz) 沿 Z 轴（高度垂直）
-- `2`：长度 (lx) 沿 X 轴，高度 (lz) 沿 Y 轴，宽度 (ly) 沿 Z 轴（宽度垂直）
-- `3`：高度 (lz) 沿 X 轴，长度 (lx) 沿 Y 轴，宽度 (ly) 沿 Z 轴（宽度垂直）
-- `4`：宽度 (ly) 沿 X 轴，高度 (lz) 沿 Y 轴，长度 (lx) 沿 Z 轴（长度垂直）
-- `5`：高度 (lz) 沿 X 轴，宽度 (ly) 沿 Y 轴，长度 (lx) 沿 Z 轴（长度垂直）
+- `"XYZ"`：长度 (lx) 沿 X 轴，宽度 (ly) 沿 Y 轴，高度 (lz) 沿 Z 轴（高度垂直）
+- `"YXZ"`：宽度 (ly) 沿 X 轴，长度 (lx) 沿 Y 轴，高度 (lz) 沿 Z 轴（高度垂直）
+- `"XZY"`：长度 (lx) 沿 X 轴，高度 (lz) 沿 Y 轴，宽度 (ly) 沿 Z 轴（宽度垂直）
+- `"ZXY"`：高度 (lz) 沿 X 轴，长度 (lx) 沿 Y 轴，宽度 (ly) 沿 Z 轴（宽度垂直）
+- `"YZX"`：宽度 (ly) 沿 X 轴，高度 (lz) 沿 Y 轴，长度 (lx) 沿 Z 轴（长度垂直）
+- `"ZYX"`：高度 (lz) 沿 X 轴，宽度 (ly) 沿 Y 轴，长度 (lx) 沿 Z 轴（长度垂直）
 
-比如 `"orients": [0, 1]` 表示该箱型的箱子只能平着放置，不能竖着放置。
+比如 `"orients": ["XYZ", "YXZ"]` 表示该箱型的箱子只能平着放置，不能竖着放置。
 
-如果未指定 `orients` 字段，默认是`[0, 1]`，也就是只允许平着放置。
+如果未指定 `orients` 字段，默认是`["XYZ", "YXZ"]`，也就是只允许平着放置。
 
 #### Box (箱子)
 
@@ -112,7 +112,7 @@ _Pack All~_
 | `x`      | integer | 装载的 X 轴坐标  |
 | `y`      | integer | 装载的 Y 轴坐标  |
 | `z`      | integer | 装载的 Z 轴坐标  |
-| `orient` | integer | 装载时的放置方向 |
+| `orient` | string  | 装载时的放置方向 |
 
 #### Output (输出数据)
 
@@ -156,38 +156,9 @@ output
 
 ## 5. 开发
 
-- 语言：C++ ，要求 [C++20](https://en.cppreference.com/w/cpp/20.html)
-- 构建：使用 [XMake](https://xmake.io) 进行构建
+- 语言：Rust，要求 Rust 1.90+
+- 构建：使用 [Cargo](https://doc.rust-lang.org/cargo/) 进行构建
 - 画图：使用 [Python](https://www.python.org) 进行画图
-- 风格：使用 [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) 统一代码风格，大部分遵循 [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html) ，小部分基于项目规模和源码简洁性的考虑采用自己的风格
-- 测试：使用 [Catch2](https://github.com/catchorg/Catch2) 进行测试
-- 安全：使用 [Dr. Memory](https://drmemory.org) 进行检查
+- 文档：运行 `cargo doc` 生成文档
+- 风格：运行 `cargo fmt` 格式化代码，遵循 Rust 官方代码风格
 - 数据：使用 [OR-Library](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/thpackinfo.html) 的测试数据以评估装箱效果
-
-note:
-
-```bash
-# 格式化代码
-xmake format
-
-# 配置 debug 模式
-xmake config -m debug
-
-# 运行 demo 并画图
-xmake run pack3d ./data/demo.json
-
-# 单元测试 & 集成测试
-xmake run test
-
-# 覆盖率测试
-opencppcoverage --sources sources --export_type html:build/coverage -- ./build/windows/x64/debug/test.exe
-
-# 配置 release 模式
-xmake config -m release
-
-# 性能测试
-xmake run bench --benchmark-no-analysis
-
-# 生成报告
-xmake run report
-```
