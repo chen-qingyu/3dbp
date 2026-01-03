@@ -44,11 +44,11 @@ def parse_br_file(file):
             lx, ly, lz = parts[1], parts[3], parts[5]
             orients = []
             if parts[6] == 1:  # 高边可垂直
-                orients += [0, 1]
+                orients += ["XYZ", "YXZ"]
             if parts[4] == 1:  # 宽边可垂直
-                orients += [2, 3]
+                orients += ["XZY", "ZXY"]
             if parts[2] == 1:  # 长边可垂直
-                orients += [4, 5]
+                orients += ["YZX", "ZYX"]
 
             box_types.append({
                 "id": box_type,

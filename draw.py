@@ -25,11 +25,14 @@ def main(data: dict):
     rows = (n + cols - 1) // cols
 
     # 创建子图
-    subplot_titles = [
-        f"Container {c['type']['id']}<br>"
-        f"<sub>Volume Rate: {c['volume_rate']:.2%}, Weight Rate: {c['weight_rate'] if c['weight_rate'] else 0:.2%}</sub>"
-        for c in containers
-    ]
+    infos = []
+    for c in containers:
+        info = f"Container {c['type']['id']}<br>"
+        info += f"<sub>Volume Rate: {c['volume_rate']:.2%}</sub>"
+        if "weight_rate" in c:
+            info += f"<sub>, Weight Rate: {c['weight_rate']:.2%}</sub>"
+        infos.append(info)
+    subplot_titles = infos
     fig = plotly.subplots.make_subplots(
         rows=rows, cols=cols,
         specs=[[{"type": "scatter3d"} for _ in range(cols)] for _ in range(rows)],
@@ -171,15 +174,15 @@ def get_text(box: dict, box_type: dict) -> str:
     return text
 
 
-def get_oriented_dim(l: int, w: int, h: int, orient: int) -> tuple[int, int, int]:
+def get_oriented_dim(l: int, w: int, h: int, orient: str) -> tuple[int, int, int]:
     """根据orient获取实际放置的尺寸"""
     orient_map = {
-        0: (l, w, h),
-        1: (w, l, h),
-        2: (l, h, w),
-        3: (h, l, w),
-        4: (w, h, l),
-        5: (h, w, l),
+        "XYZ": (l, w, h),
+        "YXZ": (w, l, h),
+        "XZY": (l, h, w),
+        "ZXY": (h, l, w),
+        "YZX": (w, h, l),
+        "ZYX": (h, w, l),
     }
     return orient_map[orient]
 

@@ -1,0 +1,55 @@
+static inline constexpr const char* SCHEMA = R"({
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["container_types", "box_types", "boxes"],
+  "properties": {
+    "container_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "lx", "ly", "lz"],
+        "properties": {
+          "id": { "type": "string" },
+          "lx": { "type": "integer", "minimum": 1 },
+          "ly": { "type": "integer", "minimum": 1 },
+          "lz": { "type": "integer", "minimum": 1 },
+          "payload": { "type": "number", "exclusiveMinimum": 0.0 },
+          "quantity": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "box_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "lx", "ly", "lz"],
+        "properties": {
+          "id": { "type": "string" },
+          "lx": { "type": "integer", "minimum": 1 },
+          "ly": { "type": "integer", "minimum": 1 },
+          "lz": { "type": "integer", "minimum": 1 },
+          "orients": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "enum": [0, 1, 2, 3, 4, 5]
+            }
+          }
+        }
+      }
+    },
+    "boxes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "weight": { "type": "number", "exclusiveMinimum": 0.0 }
+        }
+      }
+    }
+  }
+}
+)";

@@ -20,7 +20,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["type", "boxes", "volume_rate", "weight_rate"],
+        "required": ["type", "boxes", "volume_rate"],
         "properties": {
           "type": {
             "type": "object",
@@ -43,16 +43,15 @@
                 "x": { "type": "integer", "minimum": 0 },
                 "y": { "type": "integer", "minimum": 0 },
                 "z": { "type": "integer", "minimum": 0 },
-                "orient": { "type": "integer", "enum": [0, 1, 2, 3, 4, 5] }
+                "orient": {
+                  "type": "string",
+                  "enum": ["XYZ", "YXZ", "XZY", "ZXY", "YZX", "ZYX"]
+                }
               }
             }
           },
           "volume_rate": { "type": "number", "minimum": 0, "maximum": 1 },
-          "weight_rate": {
-            "type": ["number", "null"],
-            "minimum": 0,
-            "maximum": 1
-          }
+          "weight_rate": { "type": "number", "minimum": 0, "maximum": 1 }
         }
       }
     },

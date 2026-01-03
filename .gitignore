@@ -1,6 +1,6 @@
-/.vscode
-/.xmake
-/build
-/result
-/data/br_json
-/sources/input_schema.h
+/.vscode/
+/.xmake/
+/target/
+/result/
+/data/br_json/
+/Cargo.lock
