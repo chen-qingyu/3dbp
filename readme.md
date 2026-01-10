@@ -2,127 +2,127 @@
 
 _Pack All~_
 
-## 1. 属性
+## 1. Properties
 
-- 名称：pack3d
-- 目标：提供一个高效的程序帮助用户优化三维装箱的效果
-- 模块：采用模块化设计，输入输出、算法、约束，均可替换
+- Name: pack3d
+- Goal: To provide an efficient program to help users optimize the effect of 3D packing.
+- Modules: Adopts a modular design, where input/output, algorithms, and constraints can all be replaced.
 
-## 2. 特点
+## 2. Features
 
-- 简洁：Stay simple, stay young. 在保证好用和健壮的前提下，尽量简洁，便于维护和阅读
-- 好用：经过我的精心设计，用起来非常方便
-- 健壮：怎么折腾都不会崩
-- 轻量：使用及拓展非常轻便和简单
-- 高效：速度非常快，BR 测试数据统统一秒内解决
+- Simple: Stay simple, stay young. While ensuring usability and robustness, it is kept as simple as possible for easy maintenance and reading.
+- User-friendly: Carefully designed to be very convenient to use.
+- Robust: It won't crash no matter how you use it.
+- Lightweight: Very light and simple to use and extend.
+- Efficient: Extremely fast, solving all BR test data in under a second.
 
-## 3. 用法
+## 3. Usage
 
-1. 按照下述输入格式准备 JSON 输入文件
-2. 运行程序，通过参数指定输入文件路径
-3. 程序将在 `result` 目录下生成 JSON 输出文件，并自动画图展示
+1. Prepare the JSON input file according to the input format described below.
+2. Run the program, specifying the input file path via parameters.
+3. The program will generate a JSON output file in the `result` directory and automatically draw a diagram to display it.
 
-## 4. 输入输出
+## 4. Input and Output
 
-### 坐标系定义
+### Coordinate System Definition
 
-首先约定，程序统一采用右手坐标系，定义如下：
+First, it is agreed that the program uniformly adopts a right-handed coordinate system, defined as follows:
 
-- X 轴：长度，向右为正方向。
-- Y 轴：宽度，向后为正方向。
-- Z 轴：高度，向上为正方向。
+- X-axis: Length, with the positive direction to the right.
+- Y-axis: Width, with the positive direction backward.
+- Z-axis: Height, with the positive direction upward.
 
-### 输入格式
+### Input Format
 
-输入文件为 JSON 格式，包含以下字段：
+The input file is in JSON format and contains the following fields:
 
-#### ContainerType (容器类型)
+#### ContainerType
 
-| 字段名     | 类型    | 描述                                   |
-| ---------- | ------- | -------------------------------------- |
-| `id`       | string  | 容器类型的唯一标识符                   |
-| `lx`       | integer | 容器类型的长度                         |
-| `ly`       | integer | 容器类型的宽度                         |
-| `lz`       | integer | 容器类型的高度                         |
-| `payload`  | number  | 容器类型的最大载重（可选）             |
-| `quantity` | integer | 容器类型的可用数量（可选，默认无限制） |
+| Field Name | Type    | Description                                                               |
+| ---------- | ------- | ------------------------------------------------------------------------- |
+| `id`       | string  | Unique identifier for the container type                                  |
+| `lx`       | integer | Length of the container type                                              |
+| `ly`       | integer | Width of the container type                                               |
+| `lz`       | integer | Height of the container type                                              |
+| `payload`  | number  | Maximum payload of the container type (optional)                          |
+| `quantity` | integer | Available quantity of the container type (optional, default is unlimited) |
 
-#### BoxType（箱型）
+#### BoxType
 
-| 字段名    | 类型    | 描述                       |
-| --------- | ------- | -------------------------- |
-| `id`      | string  | 箱型的唯一标识符           |
-| `lx`      | integer | 箱型的长度                 |
-| `ly`      | integer | 箱型的宽度                 |
-| `lz`      | integer | 箱型的高度                 |
-| `orients` | array   | 箱型允许的放置方向（可选） |
+| Field Name | Type    | Description                                                |
+| ---------- | ------- | ---------------------------------------------------------- |
+| `id`       | string  | Unique identifier for the box type                         |
+| `lx`       | integer | Length of the box type                                     |
+| `ly`       | integer | Width of the box type                                      |
+| `lz`       | integer | Height of the box type                                     |
+| `orients`  | array   | Allowed placement orientations for the box type (optional) |
 
-##### Orients (允许的放置方向)
+##### Orients (Allowed Placement Orientations)
 
-箱型的放置方向使用字符串表示，共有六种可能的放置方向：
+The placement orientation of a box type is represented by a string, with six possible orientations:
 
-- `"XYZ"`：长度 (lx) 沿 X 轴，宽度 (ly) 沿 Y 轴，高度 (lz) 沿 Z 轴（高度垂直）
-- `"YXZ"`：宽度 (ly) 沿 X 轴，长度 (lx) 沿 Y 轴，高度 (lz) 沿 Z 轴（高度垂直）
-- `"XZY"`：长度 (lx) 沿 X 轴，高度 (lz) 沿 Y 轴，宽度 (ly) 沿 Z 轴（宽度垂直）
-- `"ZXY"`：高度 (lz) 沿 X 轴，长度 (lx) 沿 Y 轴，宽度 (ly) 沿 Z 轴（宽度垂直）
-- `"YZX"`：宽度 (ly) 沿 X 轴，高度 (lz) 沿 Y 轴，长度 (lx) 沿 Z 轴（长度垂直）
-- `"ZYX"`：高度 (lz) 沿 X 轴，宽度 (ly) 沿 Y 轴，长度 (lx) 沿 Z 轴（长度垂直）
+- `"XYZ"`: Length (lx) along the X-axis, width (ly) along the Y-axis, height (lz) along the Z-axis (height is vertical)
+- `"YXZ"`: Width (ly) along the X-axis, length (lx) along the Y-axis, height (lz) along the Z-axis (height is vertical)
+- `"XZY"`: Length (lx) along the X-axis, height (lz) along the Y-axis, width (ly) along the Z-axis (width is vertical)
+- `"ZXY"`: Height (lz) along the X-axis, length (lx) along the Y-axis, width (ly) along the Z-axis (width is vertical)
+- `"YZX"`: Width (ly) along the X-axis, height (lz) along the Y-axis, length (lx) along the Z-axis (length is vertical)
+- `"ZYX"`: Height (lz) along the X-axis, width (ly) along the Y-axis, length (lx) along the Z-axis (length is vertical)
 
-比如 `"orients": ["XYZ", "YXZ"]` 表示该箱型的箱子只能平着放置，不能竖着放置。
+For example, `"orients": ["XYZ", "YXZ"]` means that boxes of this type can only be placed flat, not upright.
 
-如果未指定 `orients` 字段，默认是`["XYZ", "YXZ"]`，也就是只允许平着放置。
+If the `orients` field is not specified, the default is `["XYZ", "YXZ"]`, which means only flat placement is allowed.
 
-#### Box (箱子)
+#### Box
 
-| 字段名   | 类型   | 描述               |
-| -------- | ------ | ------------------ |
-| `id`     | string | 箱子的唯一标识符   |
-| `type`   | string | 箱子的类型         |
-| `weight` | number | 箱子的重量（可选） |
+| Field Name | Type   | Description                   |
+| ---------- | ------ | ----------------------------- |
+| `id`       | string | Unique identifier for the box |
+| `type`     | string | Type of the box               |
+| `weight`   | number | Weight of the box (optional)  |
 
-#### Input (输入数据)
+#### Input
 
-| 字段名            | 类型  | 描述               |
-| ----------------- | ----- | ------------------ |
-| `container_types` | array | 可用的容器类型列表 |
-| `box_types`       | array | 可用的箱型列表     |
-| `boxes`           | array | 待装载的箱子列表   |
+| Field Name        | Type  | Description                       |
+| ----------------- | ----- | --------------------------------- |
+| `container_types` | array | List of available container types |
+| `box_types`       | array | List of available box types       |
+| `boxes`           | array | List of boxes to be packed        |
 
-示例输入请参考 [demo.json](data/demo.json)
+For an example input, please refer to [demo.json](data/demo.json).
 
-### 输出格式
+### Output Format
 
-输出文件为 JSON 格式，包含以下字段：
+The output file is in JSON format and contains the following fields:
 
-#### Container (容器)
+#### Container
 
-| 字段名        | 类型   | 描述             |
-| ------------- | ------ | ---------------- |
-| `type`        | object | 容器的类型       |
-| `boxes`       | array  | 已装载的箱子列表 |
-| `volume_rate` | number | 容器的体积利用率 |
-| `weight_rate` | number | 容器的载重利用率 |
+| Field Name    | Type   | Description                              |
+| ------------- | ------ | ---------------------------------------- |
+| `type`        | object | The type of the container                |
+| `boxes`       | array  | List of packed boxes                     |
+| `volume_rate` | number | Volume utilization rate of the container |
+| `weight_rate` | number | Weight utilization rate of the container |
 
-##### Box (箱子)
+##### Box
 
-| 字段名   | 类型    | 描述             |
-| -------- | ------- | ---------------- |
-| `id`     | string  | 箱子的唯一标识符 |
-| `type`   | string  | 箱型的唯一标识符 |
-| `x`      | integer | 装载的 X 轴坐标  |
-| `y`      | integer | 装载的 Y 轴坐标  |
-| `z`      | integer | 装载的 Z 轴坐标  |
-| `orient` | string  | 装载时的放置方向 |
+| Field Name | Type    | Description                        |
+| ---------- | ------- | ---------------------------------- |
+| `id`       | string  | Unique identifier for the box      |
+| `type`     | string  | Unique identifier for the box type |
+| `x`        | integer | X-axis coordinate of the placement |
+| `y`        | integer | Y-axis coordinate of the placement |
+| `z`        | integer | Z-axis coordinate of the placement |
+| `orient`   | string  | Placement orientation              |
 
-#### Output (输出数据)
+#### Output
 
-| 字段名           | 类型  | 描述             |
-| ---------------- | ----- | ---------------- |
-| `box_types`      | array | 箱型列表         |
-| `containers`     | array | 容器列表         |
-| `unpacked_boxes` | array | 未装载的箱子列表 |
+| Field Name       | Type  | Description            |
+| ---------------- | ----- | ---------------------- |
+| `box_types`      | array | List of box types      |
+| `containers`     | array | List of containers     |
+| `unpacked_boxes` | array | List of unpacked boxes |
 
-完整的输出格式树状图如下：
+A tree diagram of the complete output format is as follows:
 
 ```
 output
@@ -154,11 +154,11 @@ output
     └── ...
 ```
 
-## 5. 开发
+## 5. Development
 
-- 语言：Rust，要求 Rust 1.90+
-- 构建：使用 [Cargo](https://doc.rust-lang.org/cargo/) 进行构建
-- 画图：使用 [Python](https://www.python.org) 进行画图
-- 文档：运行 `cargo doc` 生成文档
-- 风格：运行 `cargo fmt` 格式化代码，遵循 Rust 官方代码风格
-- 数据：使用 [OR-Library](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/thpackinfo.html) 的测试数据以评估装箱效果
+- Language: Rust, requires Rust 1.90+
+- Build: Use [Cargo](https://doc.rust-lang.org/cargo/) for building
+- Drawing: Use [Python](https://www.python.org) for drawing
+- Documentation: Run `cargo doc` to generate documentation
+- Style: Run `cargo fmt` to format the code, following the official Rust code style
+- Data: Use test data from [OR-Library](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/thpackinfo.html) to evaluate packing performance
